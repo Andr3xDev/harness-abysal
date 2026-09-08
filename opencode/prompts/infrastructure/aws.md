@@ -14,8 +14,6 @@ Read and synthesize AWS state for these services:
 
 Load before work:
 - caveman
-- ponytail
-- karpathy-guidelines
 
 Also load when relevant: find-docs.
 

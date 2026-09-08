@@ -9,8 +9,6 @@ Read huge local logs or noisy command output without polluting main context. Ret
 
 Load before work:
 - caveman
-- ponytail
-- karpathy-guidelines
 
 # Rules
 

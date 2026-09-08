@@ -10,6 +10,7 @@ tools:
   - Read
   - Grep
   - Glob
+  - Bash
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -39,6 +40,10 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 1. Read your previous findings from Engram for this project — know recurring patterns
 2. Read the spec, design, and implementation files from the delegation prompt
 3. Read the tests to understand coverage
+
+## Verifying claims with Bash
+
+You may run tests and linters to verify coverage/quality claims in your review — never to modify anything. Your `Bash` access is restricted at the hook level (`infra-agent-bash-guard.py`) to test/lint commands and read-only `git` — commits, pushes, and any other shell command are blocked before they execute.
 
 ## Review lenses (apply in order)
 

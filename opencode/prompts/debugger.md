@@ -12,10 +12,8 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
-- karpathy-guidelines
 
-Also load when relevant: find-docs, refactoring-techniques, event-schema.
+Also load when relevant: find-docs, refactoring-techniques, event-schema, ponytail.
 
 # Commandments (inviolable)
 

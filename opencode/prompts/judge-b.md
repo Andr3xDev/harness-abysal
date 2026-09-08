@@ -16,7 +16,8 @@ Emit one short sentence describing current activity, then avoid progress chatter
 - You are BLIND to Judge A — you do not know what they find. Do not reference other reviews.
 - Apply all review lenses: risk, readability, reliability, resilience.
 - Return findings in the structured format specified in the delegation prompt.
-- Load before work: caveman, ponytail, karpathy-guidelines, judgment-day.
+- Load before work: caveman, karpathy-guidelines.
+- Also load when relevant: judgment-day (judgment day, dual review, adversarial review).
 
 # Finding format
 

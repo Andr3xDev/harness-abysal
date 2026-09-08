@@ -12,7 +12,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
 Also load when relevant: find-docs, md-style-guide, senior-architect, software-design-patterns, event-schema.
@@ -44,15 +43,16 @@ Use Context7 MCP ONLY when there is a real doubt about a library/framework/SDK A
 # OpenSpec CLI
 
 Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
-After writing design, run:
-- `openspec status --change {change-name}`
-- `openspec validate {change-name} --type change --no-interactive`
+`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens only, no dots) — created by sdd-propose.
+
+1. Get output path and constraints: `openspec instructions design --change "{project}-{change-name}" --json`
+   Parse `resolvedOutputPath`, `template`, `rules`, `context`, `dependencies` from the JSON. `context` and `rules` are constraints for you — never copy them into the file. Read `dependencies` (e.g. proposal) for context before writing.
+2. After writing, run `openspec status --change "{project}-{change-name}" --json` and `openspec validate "{project}-{change-name}" --json`.
 
 # File output (mandatory)
 
-Write to `/home/andrex/dev/specter/openspec/changes/{project}-{change-name}/design.md`.
-OpenSpec change names cannot contain path separators; prefix with project in the flat change ID.
-`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Write to the `resolvedOutputPath` returned by `openspec instructions design --change "{project}-{change-name}" --json`. Do not invent or hardcode the path — use `template` as the structure.
 
 # Engram save
 

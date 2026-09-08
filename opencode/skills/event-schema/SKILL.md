@@ -57,3 +57,4 @@ Return for each event:
 - Schema definition
 - Producer and consumers
 - Whether it's new or modified
+- If modified: breaking change assessment

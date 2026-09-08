@@ -12,9 +12,12 @@ Applies to any document, report, planning file, or structured output in markdown
 - The document title uses `#` — only one per document, always at the top
 - The title is centered using HTML: `<h1 align="center">Title</h1>`
 - Immediately below the title: either a subtitle or shield.io badges — never both
+  - Badges: only when explicitly requested
 - Subtitle: plain text, no formatting, centered: `<p align="center">Subtitle here</p>`
 - All other sections use `##`, `###`, `####` — never skip levels
 - Section headers are plain text — no bold, no italics, no inline code unless the header is a term
+
+<br>
 
 ## Separators and Spacing
 
@@ -22,6 +25,8 @@ Applies to any document, report, planning file, or structured output in markdown
 - Use `<br>` to create visual breathing room between sections
 - Use two consecutive `<br>` tags on separate lines to separate major sections that need stronger visual separation
 - Blank lines between paragraphs — do not crowd content
+
+<br>
 
 ## Typography
 
@@ -31,12 +36,16 @@ Applies to any document, report, planning file, or structured output in markdown
 - Never use bold and italics together unless absolutely necessary
 - Inline `code` for technical terms, commands, file paths, and values — not for emphasis
 
+<br>
+
 ## Bullets and Lists
 
 - Use `-` for all bullet points — never `*`
 - Nested bullets only when hierarchy genuinely exists in the content
 - Do not bullet-ize content that reads better as prose
 - Ordered lists (`1.`) only when sequence or priority matters
+
+<br>
 
 ## Tables
 
@@ -46,11 +55,22 @@ Applies to any document, report, planning file, or structured output in markdown
 - Keep tables narrow — split into multiple tables if too many columns reduce readability
 - No decoration inside cells — no bold on regular data, no inline code unless it is actual code
 
+Example:
+
+| **Category** | **Rule** | **When** |
+|:---|:---|:---:|
+| Separators | Use `<br>` | Always |
+| Bold | Key terms only | Sparingly |
+
+<br>
+
 ## Emojis
 
 - No emojis in body text or headers
 - Allowed only as warning or status indicators in specific contexts and only when the document format calls for it explicitly
 - Shield.io badges are not emojis
+
+<br>
 
 ## General Principles
 
@@ -58,6 +78,8 @@ Applies to any document, report, planning file, or structured output in markdown
 - If content feels cluttered, break it into subsections or separate paragraphs
 - Consistency across the document matters more than local cleverness
 - When in doubt: less formatting, more clarity
+
+<br>
 
 ## Control Points
 

@@ -20,6 +20,12 @@ only installer backup directories without installing:
 ./scripts/install.sh --clean-backups
 ```
 
+Update current repo into local config (smoke test, install, then remove installer backups):
+
+```bash
+./scripts/update.sh
+```
+
 Then set secrets/auth outside repo:
 
 - `GITHUB_TOKEN` in shell env
@@ -35,7 +41,7 @@ opencode debug config
 opencode mcp list
 ```
 
-Refresh repo from this machine:
+Refresh imports local config into repo; use `update.sh` to deploy repo into local config:
 
 ```bash
 ./scripts/refresh-from-local.sh
@@ -56,37 +62,42 @@ Smoke always uses temporary `HOME`; installed CLI checks print `SKIP` when unava
 
 ```
 tech-orchestrator          strategist
-  (decomposes, delegates)    (business/product discussion — no code)
-        │
-        ├── sdd-explore     → investigate before proposing
-        ├── sdd-propose     → proposal.md
-        ├── sdd-spec        → specs/spec.md (GIVEN/WHEN/THEN)
-        ├── sdd-design      → design.md (ADR-lite)
+  (decomposes, delegates)    (business/product discussion, no code)
+        │                         │
+        ├── sdd-explore     → investigate before proposing        ◄─ strategist may also delegate here
+        ├── sdd-propose     → proposal.md                          ◄─ strategist may also delegate here
+        ├── sdd-spec        → specs/spec.md (GIVEN/WHEN/THEN)      ◄─ strategist may also delegate here
+        ├── sdd-design      → design.md (ADR-lite)                 ◄─ strategist may also delegate here
         ├── sdd-tasks       → tasks.md (ordered, PR-size forecast)
         ├── builder         → default code/config/docs writer
         ├── test-writer     → valuable failing tests (TDD red)
         ├── implementer     → strict TDD green from existing failing tests
-        ├── code-reviewer   → spec/design/test conformance review
+        ├── code-reviewer   → spec/design/test conformance review (can run tests/linters/read-only git to verify claims)
         ├── judge-a/judge-b → blind dual adversarial review (judgment-day)
         ├── debugger        → root cause + fix (per AUTH)
         ├── codegraph-maintainer → CodeGraph index health
         └── sdd-verify → sdd-archive → PR description ready
 ```
 
-The orchestrator never writes code directly. SDD runs only when explicitly asked;
-TDD runs only when tests add signal. Normal writes go to `builder`.
+The orchestrator never writes code directly. Strategist's delegation is scoped to
+`sdd-explore`/`sdd-propose`/`sdd-spec`/`sdd-design` only — never to implementation-phase
+agents (`sdd-tasks`, `builder`, `test-writer`, `implementer`, `code-reviewer`,
+`sdd-verify`, `sdd-archive`). SDD activates only when the user explicitly asks for
+plan/spec/design/SDD/OpenSpec, or a spec/tasks artifact already exists for the change —
+otherwise implementation goes straight to `builder` or the TDD loop (`test-writer` →
+`implementer` → `code-reviewer`) with no spec required. TDD runs only when tests add signal.
 
 ## Agents (`agents/`)
 
 | Agent | Role |
 |-------|------|
 | `tech-orchestrator` | Claude entry point for multi-step task. Decomposes, delegates, never codes. |
-| `strategist` | Business-language discussion partner — epics/goals, no code, no delegation. |
+| `strategist` | Business-language discussion partner — epics/goals, no code. May delegate, but only to `sdd-explore`/`sdd-propose`/`sdd-spec`/`sdd-design`; never to implementation-phase agents. |
 | `sub-agents/sdd/*` | One agent per SDD phase: explore, propose, spec, design, tasks, verify, archive. |
 | `sub-agents/tdd/builder` | Default writer when strict TDD is not useful. |
 | `sub-agents/tdd/test-writer` | Writes failing tests from specs (red phase). |
 | `sub-agents/tdd/implementer` | Minimal implementation to turn tests green. |
-| `sub-agents/review/code-reviewer` | Standard spec/design/test conformance review. |
+| `sub-agents/review/code-reviewer` | Spec/design/test conformance review. Has a scoped `Bash` tool (hook-restricted to running tests/linters and read-only git) to verify test/lint claims — still cannot modify any file. |
 | `sub-agents/review/judge-a`, `judge-b` | Blind parallel adversarial review for critical features. |
 | `sub-agents/debug/debugger` | Root cause analysis; fixes only with explicit AUTH. |
 | `sub-agents/infrastructure/aws` | Read-only AWS investigation. |

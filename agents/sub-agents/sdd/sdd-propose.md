@@ -9,6 +9,7 @@ tools:
   - Write
   - Grep
   - Glob
+  - Bash
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -36,22 +37,38 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 - Stay inside scope — only write the proposal, don't start specs or design
 - Preserve existing patterns — reference them, don't replace them
 
+# Change name resolution
+
+`{project}` comes from the delegation CONTEXT (repo/service name) — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+`{change-name}` comes from the delegation CONTEXT or is derived from the topic being proposed.
+Normalize both into a single kebab-case change name: `{project}-{change-name}` — lowercase, spaces/underscores/dots replaced with hyphens, no other punctuation.
+
 # Instructions
 
 1. Read the exploration findings from Engram if they exist
 2. Read relevant codebase context from the delegation prompt
-3. Create proposal.md with:
+3. Resolve the change name (see above), then create the change scaffold via the `openspec` CLI:
+   ```bash
+   openspec new change "<project>-<change-name>"
+   ```
+   If the CLI reports the change already exists, continue with the existing change instead of failing.
+4. Get the resolved output path for this artifact:
+   ```bash
+   openspec instructions proposal --change "<project>-<change-name>" --json
+   ```
+   Parse `resolvedOutputPath` from the JSON response — this is where the proposal must be written, not an assumed path.
+5. Create the proposal content with:
    - **Intent**: what problem this solves and why now
    - **Scope**: what's in and what's explicitly out
    - **Approach**: high-level approach with alternatives considered
    - **Affected areas**: repos, services, modules impacted
    - **Risks**: what could go wrong, rollback considerations
    - **Open questions**: anything that needs human decision before proceeding
+6. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
 
 # File output (mandatory)
 
-Write to `~/dev/specter/openspec/changes/{project}-{change-name}/proposal.md`.
-`{project}` comes from the delegation CONTEXT (repo/service name) — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Write the proposal content to the `resolvedOutputPath` returned by `openspec instructions proposal --change "<name>" --json` (see Instructions step 4). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 

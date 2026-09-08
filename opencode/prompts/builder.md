@@ -10,7 +10,6 @@ Build or modify code/config/docs without mandatory TDD. Use the smallest correct
 Load before work:
 - caveman
 - ponytail
-- karpathy-guidelines
 
 Also load when relevant: find-docs, md-style-guide, refactoring-techniques, senior-architect, software-design-patterns, event-schema.
 

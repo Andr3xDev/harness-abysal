@@ -31,6 +31,15 @@ Use Context7 MCP, not CLI, when current docs matter.
 Use `/org/project/version` when user names a version and Context7 offers one.
 Never include secrets in queries.
 
+## Query Quality
+
+| Quality | Example |
+|---------|---------|
+| Good | `"How to set up authentication with JWT in Express.js"` |
+| Bad | `"auth"` / `"hooks"` |
+
+Use the full question, not a single vague word.
+
 ## Failure
 
-If Context7 quota/auth fails, tell the user. Do not silently fall back to training data.
+If Context7 quota/auth fails: tell the user, do not silently fall back to training data, and ask whether to continue from training knowledge (note it may be outdated).

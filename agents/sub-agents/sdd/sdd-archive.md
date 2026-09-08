@@ -9,6 +9,7 @@ tools:
   - Read
   - Write
   - Glob
+  - Bash
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -40,16 +41,24 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 
 1. Read verification report from Engram (required — do not archive without it)
 2. If verification had CRITICAL findings: STOP and report blocker to orchestrator
-3. Move change folder from active to archive:
-   - From: `openspec/changes/{project}-{change-name}/` or Engram active keys
-   - To: `openspec/changes/archive/{project}-{change-name}/` or Engram archive keys
-4. Generate PR description with:
+3. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
+4. Archive the change via the `openspec` CLI:
+   ```bash
+   openspec archive "<project>-<change-name>" -y
+   ```
+
+   If the CLI archive command isn't available or fails, fall back to the manual pattern used by the reference `openspec-archive-change` skill:
+   a. `openspec status --change "<name>" --json` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
+   b. Read `tasks.md` and count incomplete (`- [ ]`) vs complete (`- [x]`) tasks — flag and continue if incomplete tasks remain
+   c. `mkdir -p "<planningHome.changesDir>/archive"`
+   d. `mv "<changeRoot>" "<planningHome.changesDir>/archive/<name>"` (no date prefix — matches the repo's actual archive convention; the primary `openspec archive` command above may add its own date prefix, but this manual fallback intentionally omits one to stay consistent with existing archived changes)
+5. Generate PR description with:
    - What was changed and why (from proposal)
    - Technical decisions made (from design)
    - Spec scenarios fulfilled (from spec)
    - Tests added (from verify report)
    - Files changed (from apply-progress)
-5. Persist final archive report to Engram
+6. Persist final archive report to Engram
 
 # Engram save (mandatory)
 

@@ -12,7 +12,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
 Also load when relevant: md-style-guide.
@@ -27,9 +26,7 @@ Also load when relevant: md-style-guide.
 
 1. Read verification report from Engram (required — do not archive without it)
 2. If verification had CRITICAL findings: STOP and report blocker to orchestrator
-3. Move change folder from active to archive:
-   - From: `openspec/changes/{project}-{change-name}/` or Engram active keys
-   - To: `openspec/changes/archive/{project}-{change-name}/` or Engram archive keys
+3. Archive the change via the OpenSpec CLI (see below) — do not move folders manually unless the CLI fails
 4. Generate PR description with:
    - What was changed and why (from proposal)
    - Technical decisions made (from design)
@@ -41,10 +38,18 @@ Also load when relevant: md-style-guide.
 # OpenSpec CLI
 
 Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
-Prefer CLI archive when change is valid:
-- `openspec status --change {change-name}`
-- `openspec validate {change-name} --type change --no-interactive`
-- `openspec archive {change-name}`
+
+1. `openspec status --change "{project}-{change-name}" --json` — check artifact completion (`artifacts[].status == "done"`) and read `changeRoot`, `planningHome`.
+2. `openspec validate "{project}-{change-name}" --json` — confirm no validation errors before archiving.
+3. If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator, do not archive.
+4. Archive: `openspec archive "{project}-{change-name}" -y`
+   This handles the move to the archive location resolved by `planningHome`. Do not manually `mv` the change folder unless the CLI command fails.
+
+   If the CLI archive command fails, fall back to this manual pattern:
+   a. `openspec status --change "{project}-{change-name}" --json` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
+   b. Read `tasks.md` and count incomplete (`- [ ]`) vs complete (`- [x]`) tasks — flag and continue if incomplete tasks remain
+   c. `mkdir -p "<planningHome.changesDir>/archive"`
+   d. `mv "<changeRoot>" "<planningHome.changesDir>/archive/{project}-{change-name}"` (no date prefix — matches the repo's actual archive convention)
 
 # Engram save
 

@@ -11,6 +11,7 @@ Your job is to understand, route, delegate when useful, validate, and close. You
 6. Preserve existing project patterns.
 7. Surface subagent errors immediately.
 8. Persist only useful decisions, bug fixes, discoveries, workflow rules, and session summaries to Engram.
+9. Subagents report to you, never to the user. On missing/ambiguous context they assume, document, and continue; only `status: blocked` for true hard blockers.
 
 # Communication budget
 
@@ -143,8 +144,9 @@ Tell the user briefly what was delegated and continue with non-conflicting discu
 # Close
 
 1. Verify with smallest useful proof.
-2. Report changed files, proof run, and unresolved risks.
-3. Save Engram summary before saying done.
+2. Circuit breaker: if code-reviewer reports the same BLOCKER on the same finding/file 3 times in a row, STOP the reviewer↔implementer cycle and escalate to the human instead of iterating further.
+3. Report changed files, proof run, and unresolved risks.
+4. Save Engram summary before saying done.
 
 # Engram value gate
 

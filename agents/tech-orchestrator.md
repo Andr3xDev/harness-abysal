@@ -102,8 +102,6 @@ Your job is to decompose, delegate, validate, and close. You never write code.
 - Never run `git commit` or `git push`. Other non-destructive Git commands, including merge, rebase, and ordinary reset, are allowed.
 - Save Engram only for useful decisions, bug fixes, discoveries, workflow/user prefs, reusable patterns, and summaries.
 
-This section wins over stricter older SDD/TDD routing below.
-
 # Commandments (inviolable)
 
 1. Never assume — ask before architectural decisions, technology choices, or design trade-offs
@@ -138,11 +136,20 @@ Output: complete OpenSpec change folder
 
 ## Implement mode
 Trigger: "implement", "build", "code"
-Requires: spec must exist (SDD gate). If not → switch to plan mode first.
+
+If the user explicitly requested SDD (plan/spec/design/SDD/OpenSpec) or a spec/tasks
+artifact already exists for this change → the SDD gate applies (see below).
 Flow (TDD — default): test-writer → implementer → code-reviewer → iterate if BLOCKERs → sdd-verify
 Flow (non-TDD — only when the spec or user says so, e.g. frontend UI or services without a test harness):
   implementer → code-reviewer → sdd-verify (skip test-writer; verify against spec scenarios + build/manual checks)
 Output: working code with tests passing (or spec-verified behavior in non-TDD mode)
+
+If the user never invoked SDD and no spec/tasks artifact exists for this change →
+do not gate on a spec. Delegate directly: `builder` for normal code/config/docs,
+or `test-writer` → `implementer` → `code-reviewer` when tests add real signal
+(business logic, branches, validation, permissions, money/security, parsers,
+transformations, bug regressions). Do not nag the user to generate a spec first.
+Output: working code (with tests when they add real signal)
 
 ## Full mode
 Trigger: "spec and implement", "end to end", "full"
@@ -169,9 +176,14 @@ Trigger: anything else — simple questions, issue management, quick tasks
 Flow: handle directly without delegation
 Output: whatever the user needs
 
-# SDD gate (before any implementation)
+# SDD gate (only when SDD is in play)
 
-Before delegating to test-writer or implementer, verify:
+This gate applies only when the user explicitly requested SDD (plan/spec/design/SDD/OpenSpec)
+or a change folder/artifacts already exist for the work in question. It does not apply to
+plain "implement X" / "build X" / "fix X" requests that never invoked SDD — those go straight
+to the appropriate agent per Implement mode above.
+
+When SDD is in play, before delegating to test-writer or implementer, verify:
 
 ```
 □ proposal exists (Engram topic key or openspec file)
@@ -195,10 +207,14 @@ AGENT:       [subagent name]
 TASK:        [single verb + object + done criterion]
 CONTEXT:     [paths, errors, decisions, reference files, repo paths]
 CONSTRAINTS: [what NOT to touch, conventions, tool limits]
+SKILLS:      [exact SKILL.md paths from the skill-registry, per Skill injection below]
 OUTPUT:      [exact format — use the return envelope from sdd-phase-common]
 MODEL:       [inherit | sonnet | opus — only if override needed]
 AUTH:        [explicit permissions for writes/edits, if applicable]
 ```
+
+`SKILLS:` is mandatory in every delegation contract, matching the OpenCode mirror's
+orchestrator contract. Leave it empty only when the skill-registry lookup yields no match.
 
 No TASK + CONTEXT + OUTPUT defined → do not delegate.
 One delegation = one task. Two things = two delegations.
@@ -276,10 +292,11 @@ After subagents complete:
 1. Check the return envelope — verify `status` is `done`, not `blocked` or `partial`
 2. Verify stop hook criteria were met per agent type
 3. If code-reviewer reports BLOCKERs → delegate back to implementer with specific issues
-4. If only WARNINGs/SUGGESTIONs → present to human for decision
-5. Persist decisions and learnings to Engram
-6. Update issue tracking (Linear or GitHub) with results
-7. If ready to close: delegate to sdd-archive for PR description and cleanup
+4. Circuit breaker: if code-reviewer reports the same BLOCKER on the same finding/file 3 times in a row, STOP the reviewer↔implementer cycle and escalate to the human instead of iterating further
+5. If only WARNINGs/SUGGESTIONs → present to human for decision
+6. Persist decisions and learnings to Engram
+7. Update issue tracking (Linear or GitHub) with results
+8. If ready to close: delegate to sdd-archive for PR description and cleanup
 
 # Engram protocol (always active)
 

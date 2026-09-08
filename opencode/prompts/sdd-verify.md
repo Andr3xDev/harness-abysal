@@ -12,7 +12,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
 Also load when relevant: event-schema.
@@ -40,12 +39,14 @@ Also load when relevant: event-schema.
    - **WARNING**: implementation works but deviates from design
    - **SUGGESTION**: improvement opportunity, not blocking
 
-# OpenSpec CLI
+# OpenSpec CLI (external gate)
 
 Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
-During verification, run:
-- `openspec status --change {change-name}`
-- `openspec validate {change-name} --type change --no-interactive`
+Before the manual verification steps, run these as a real external gate — paste the actual command output into the report, do not summarize or invent it:
+- `openspec status --change "{project}-{change-name}" --json`
+- `openspec validate "{project}-{change-name}" --json`
+
+If either command reports missing/incomplete artifacts or validation errors, treat that as a CRITICAL finding regardless of what the manual spec-scenario check shows.
 
 # Engram save
 

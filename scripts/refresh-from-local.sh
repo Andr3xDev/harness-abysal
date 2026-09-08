@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUPS="$ROOT/.refresh-backups"
-MANAGED_DIRS=(agents commands skills hooks opencode)
+MANAGED_DIRS=(agents commands skills hooks opencode sounds)
 MANAGED_FILES=(configs/CLAUDE.md configs/claude-settings.json configs/common-sdd.md configs/engram-protocol.md configs/context7.md)
 
 usage() {
@@ -17,6 +17,8 @@ copy_tree() {
   mkdir -p "$target"
   tar \
     --exclude='.git' --exclude='*/.git' \
+    --exclude='__pycache__' --exclude='*/__pycache__' \
+    --exclude='*.pyc' \
     --exclude='node_modules' --exclude='*/node_modules' \
     --exclude='sessions' --exclude='*/sessions' \
     --exclude='cache' --exclude='*/cache' \
@@ -65,13 +67,13 @@ refresh() {
   copy_tree "$HOME/.claude/commands" "$ROOT/commands"
   copy_tree "$HOME/.claude/skills" "$ROOT/skills"
   copy_tree "$HOME/.claude/hooks" "$ROOT/hooks"
-  find "$ROOT/hooks" -type f ! -name '*.sh' -delete
   copy_file "$HOME/.claude/CLAUDE.md" "$ROOT/configs/CLAUDE.md"
   copy_file "$HOME/.claude/settings.json" "$ROOT/configs/claude-settings.json"
   copy_file "$HOME/.claude/common-sdd.md" "$ROOT/configs/common-sdd.md"
   copy_file "$HOME/.claude/engram-protocol.md" "$ROOT/configs/engram-protocol.md"
   copy_file "$HOME/.claude/rules/context7.md" "$ROOT/configs/context7.md"
   copy_tree "$HOME/.config/opencode" "$ROOT/opencode"
+  copy_tree "$HOME/.claude/sounds" "$ROOT/sounds"
   find "$ROOT" -name .DS_Store -delete
   echo "refreshed managed config; backup: .refresh-backups/$stamp"
 }

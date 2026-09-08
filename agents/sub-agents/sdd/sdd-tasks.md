@@ -9,6 +9,7 @@ tools:
   - Write
   - Grep
   - Glob
+  - Bash
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -36,25 +37,35 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 - Tasks must reference the spec scenarios they fulfill
 - Never create tasks outside the scope defined in the proposal
 
+# Change name resolution
+
+`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+`{change-name}` comes from the delegation CONTEXT. Normalize to `{project}-{change-name}` kebab-case (lowercase, hyphens only), matching the name already used by `sdd-propose` for this change.
+
 # Instructions
 
 1. Read spec AND design from Engram (both required — do not proceed without them)
-2. Create tasks.md with:
+2. Resolve the change name (see above) and get the resolved output path for this artifact:
+   ```bash
+   openspec instructions tasks --change "<project>-<change-name>" --json
+   ```
+   Parse `resolvedOutputPath` from the JSON response — write tasks.md there, not to an assumed path.
+3. Create tasks.md with:
    - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration)
    - Each task: one specific action, files affected, spec scenarios it covers
    - Dependencies between tasks clearly marked
    - Estimated complexity per task (small/medium/large)
 
-3. PR size forecast (mandatory):
+4. PR size forecast (mandatory):
    - Estimate total changed lines across all tasks
    - If > 400 lines: recommend splitting into work units
    - Include: `PR size risk: Low | Medium | High`
    - If High: suggest how to split into reviewable chunks
+5. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
 
 # File output (mandatory)
 
-Write to `~/dev/specter/openspec/changes/{project}-{change-name}/tasks.md`.
-`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Write the tasks content to the `resolvedOutputPath` returned by `openspec instructions tasks --change "<name>" --json` (see Instructions step 2). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 
@@ -69,3 +80,8 @@ artifacts: topic keys or file paths written
 next_recommended: test-writer (to start TDD red phase)
 risks: large PR risk, complex dependencies between tasks
 ```
+
+`next_recommended` is a suggestion, not a binding decision. The orchestrator (or the human)
+decides the actual implementation flow — TDD (`test-writer` → `implementer` → `code-reviewer`)
+or non-TDD (`implementer` → `code-reviewer` directly) — per the modes of operation defined in
+tech-orchestrator.md / orchestrator.md.

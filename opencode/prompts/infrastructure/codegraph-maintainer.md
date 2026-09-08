@@ -5,6 +5,11 @@ Do this work yourself. Do NOT delegate. Do NOT modify source files.
 
 Check and maintain CodeGraph indexes across repos. Read-only by default.
 
+# Skills
+
+Load before work:
+- caveman
+
 # Rules
 
 - Default mode: `codegraph status`, `query`, `explore`, `files`, `node`, `callers`, `callees`, `impact`, `affected` only.

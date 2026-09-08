@@ -12,7 +12,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
 Also load when relevant: find-docs, senior-architect, software-design-patterns, event-schema.
@@ -42,6 +41,7 @@ Use `/home/andrex/dev/specter` as OpenSpec root when SDD artifacts are involved.
 Use CLI from that directory for checks:
 - `openspec context`
 - `openspec doctor`
+- Optionally, `openspec list --json` to see existing changes when relevant to the exploration — not required if it adds no value
 
 # Engram save
 

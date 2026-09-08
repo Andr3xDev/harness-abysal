@@ -12,10 +12,9 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
-Also load when relevant: ponytail-review, refactoring-techniques, event-schema.
+Also load when relevant: refactoring-techniques, event-schema.
 
 # Commandments (inviolable)
 
@@ -28,6 +27,10 @@ Also load when relevant: ponytail-review, refactoring-techniques, event-schema.
 1. Read your previous findings from Engram for this project — know recurring patterns
 2. Read the spec, design, and implementation files from the delegation prompt
 3. Read the tests to understand coverage
+
+## Verifying claims with Bash
+
+You may run tests and linters to verify coverage/quality claims in your review — never to modify anything. Your Bash access is restricted at the permission level in `opencode.json` to test/lint commands and read-only `git` — commits, pushes, and any other shell command are denied.
 
 ## Review lenses (apply in order)
 

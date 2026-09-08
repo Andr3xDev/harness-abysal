@@ -10,6 +10,7 @@ tools:
   - Read
   - Grep
   - Glob
+  - Bash
   - WebFetch
   - WebSearch
   - mcp__engram__mem_context
@@ -48,11 +49,16 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 # Instructions
 
 1. Understand the topic or feature to investigate from the delegation prompt
-2. Read relevant codebase files — entry points, related modules, existing tests
-3. Identify affected areas, constraints, coupling between services
-4. Compare approaches with pros/cons/effort when applicable
-5. Identify risks, unknowns, and points of failure
-6. Return structured analysis with recommendation
+2. If the investigation is tied to a specific project's changes, check what's already active:
+   ```bash
+   openspec list --json
+   ```
+   Use this only when it adds real context (e.g. a related change already exists or is in progress) — skip it for purely codebase-level exploration.
+3. Read relevant codebase files — entry points, related modules, existing tests
+4. Identify affected areas, constraints, coupling between services
+5. Compare approaches with pros/cons/effort when applicable
+6. Identify risks, unknowns, and points of failure
+7. Return structured analysis with recommendation
 
 # Engram save (mandatory)
 

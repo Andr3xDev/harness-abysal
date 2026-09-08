@@ -16,8 +16,11 @@ tools:
   - mcp__engram__mem_save
   - mcp__engram__mem_current_project
   - mcp__engram__mem_get_observation
+  - mcp__context7__resolve-library-id
+  - mcp__context7__query-docs
 mcpServers:
   - engram
+  - context7
 color: yellow
 ---
 

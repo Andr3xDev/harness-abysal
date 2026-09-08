@@ -9,6 +9,7 @@ tools:
   - Write
   - Grep
   - Glob
+  - Bash
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -36,10 +37,20 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 - Every scenario must be testable — no vague acceptance criteria
 - Stay inside scope — specs only, no design decisions or implementation details
 
+# Change name resolution
+
+`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+`{change-name}` comes from the delegation CONTEXT. Normalize to `{project}-{change-name}` kebab-case (lowercase, hyphens only), matching the name already used by `sdd-propose` for this change.
+
 # Instructions
 
 1. Read the proposal from Engram (required — do not proceed without it)
-2. Write delta specs using GIVEN/WHEN/THEN format:
+2. Resolve the change name (see above) and get the resolved output path for this artifact:
+   ```bash
+   openspec instructions spec --change "<project>-<change-name>" --json
+   ```
+   Parse `resolvedOutputPath` from the JSON response — the CLI resolves the real spec path (e.g. `specs/{capability}/spec.md`), do not hardcode it yourself.
+3. Write delta specs using GIVEN/WHEN/THEN format:
 
 ```
 GIVEN [context / precondition]
@@ -47,14 +58,14 @@ WHEN  [action or event]
 THEN  [observable, verifiable result]
 ```
 
-3. Cover: happy path, error cases, edge cases, boundary conditions
-4. If the feature emits domain events: specify the event schema in the spec
-5. Each spec should map 1:1 to a testable behavior
+4. Cover: happy path, error cases, edge cases, boundary conditions
+5. If the feature emits domain events: specify the event schema in the spec
+6. Each spec should map 1:1 to a testable behavior
+7. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
 
 # File output (mandatory)
 
-Write to `~/dev/specter/openspec/changes/{project}-{change-name}/specs/spec.md`.
-`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Write the spec content to the `resolvedOutputPath` returned by `openspec instructions spec --change "<name>" --json` (see Instructions step 2). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 

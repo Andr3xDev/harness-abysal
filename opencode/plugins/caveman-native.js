@@ -13,6 +13,7 @@ function call(event, payload = {}) {
     const raw = execFileSync(command, [...prefix, "native-hook", "opencode", event], {
       input: JSON.stringify({ event_name: event, ...payload }),
       encoding: "utf8",
+      stdio: ["pipe", "pipe", "ignore"],
       timeout: 2000,
       maxBuffer: 2 * 1024 * 1024,
     });

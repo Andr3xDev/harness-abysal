@@ -38,23 +38,29 @@ If truly blocked: return `status: blocked` with full details so the orchestrator
 # Instructions
 
 1. Read spec, design, and tasks from Engram (all required)
-2. Read the implementation files referenced in apply-progress
-3. Run the test suite — report results exactly as they are
-4. For each spec scenario, verify:
+2. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
+3. Run the external CLI gate and include the raw output in the report — this is a real external check, not a self-reported one:
+   ```bash
+   openspec status --change "<project>-<change-name>" --json
+   openspec validate "<project>-<change-name>" --json
+   ```
+4. Read the implementation files referenced in apply-progress
+5. Run the test suite — report results exactly as they are
+6. For each spec scenario, verify:
    - Is there a test that covers this scenario?
    - Does the implementation handle this scenario correctly?
    - Are edge cases from the spec actually covered?
-5. Compare implementation against design decisions:
+7. Compare implementation against design decisions:
    - Were the chosen patterns actually followed?
    - Were any alternatives implemented instead without justification?
-6. Classify each finding:
+8. Classify each finding:
    - **CRITICAL**: spec scenario not implemented or test missing for it
    - **WARNING**: implementation works but deviates from design
    - **SUGGESTION**: improvement opportunity, not blocking
 
 # Engram save (mandatory)
 
-Save verification report to Engram with topic_key: `sdd/{change-name}/verify-report`
+Save verification report to Engram with topic_key: `sdd/{change-name}/verify-report`. Include the raw `openspec status` and `openspec validate` JSON output as the external gate evidence.
 
 # Result contract
 

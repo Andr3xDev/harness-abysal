@@ -67,6 +67,23 @@
           {
             "type": "prompt",
             "prompt": "Inspect Bash command. Return ask if it removes files, irreversibly alters database data or schema, wipes or formats disks, or runs git reset --hard. Otherwise return approve. git commit and git push are denied by permissions."
+          },
+          {
+            "type": "command",
+            "command": "python3 '/home/andrex/.claude/hooks/infra-agent-bash-guard.py'",
+            "timeout": 10,
+            "statusMessage": "Checking infra read-only agent allow-list..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 '/home/andrex/.claude/hooks/infra-agent-bash-guard.py'",
+            "timeout": 10,
+            "statusMessage": "Checking debugger edit confirmation..."
           }
         ]
       }
@@ -142,5 +159,8 @@
     }
   },
   "effortLevel": "medium",
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
 }

@@ -12,7 +12,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 
 Load before work:
 - caveman
-- ponytail
 - karpathy-guidelines
 
 Also load when relevant: md-style-guide.
@@ -41,15 +40,16 @@ Also load when relevant: md-style-guide.
 # OpenSpec CLI
 
 Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
-After writing tasks, run:
-- `openspec status --change {change-name}`
-- `openspec validate {change-name} --type change --no-interactive`
+`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens only, no dots) — created by sdd-propose.
+
+1. Get output path and constraints: `openspec instructions tasks --change "{project}-{change-name}" --json`
+   Parse `resolvedOutputPath`, `template`, `rules`, `context`, `dependencies` from the JSON. `context` and `rules` are constraints for you — never copy them into the file. Read `dependencies` (e.g. spec, design) for context before writing.
+2. After writing, run `openspec status --change "{project}-{change-name}" --json` and `openspec validate "{project}-{change-name}" --json`.
 
 # File output (mandatory)
 
-Write to `/home/andrex/dev/specter/openspec/changes/{project}-{change-name}/tasks.md`.
-OpenSpec change names cannot contain path separators; prefix with project in the flat change ID.
-`{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
+Write to the `resolvedOutputPath` returned by `openspec instructions tasks --change "{project}-{change-name}" --json`. Do not invent or hardcode the path — use `template` as the structure.
 
 # Engram save
 
@@ -64,3 +64,8 @@ artifacts: topic keys or file paths written
 next_recommended: test-writer (to start TDD red phase)
 risks: large PR risk, complex dependencies between tasks
 ```
+
+`next_recommended` is a suggestion, not a binding decision. The orchestrator (or the human)
+decides the actual implementation flow — TDD (`test-writer` → `implementer` → `code-reviewer`)
+or non-TDD (`implementer` → `code-reviewer` directly) — per the modes of operation defined in
+tech-orchestrator.md / orchestrator.md.
