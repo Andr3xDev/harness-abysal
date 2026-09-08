@@ -1,5 +1,3 @@
-@RTK.md
-
 # Global Agent Harness
 
 > Defines HOW we work. Never WHAT we build.

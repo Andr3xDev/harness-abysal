@@ -1,7 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "@dietrichgebert/ponytail"
+    "@dietrichgebert/ponytail",
+    "@mohak34/opencode-notifier"
   ],
   "default_agent": "orchestrator",
   "agent": {
