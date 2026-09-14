@@ -1,149 +1,104 @@
 ---
 name: skill-registry
-description: "Trigger: update skills, skill registry, refresh skills, after skill changes. Index available skills by trigger and path."
+description: "Trigger: update skills, skill registry, refresh skills, or role skill policy. Index available skills and apply the role-scoped delegation policy."
 license: MIT
 metadata:
   author: custom
-  version: "1.0"
+  version: "1.1"
 ---
 
-## Activation Contract
+## Purpose
 
-Use this skill after installing, removing, creating, moving, or renaming skills.
-Also use when the orchestrator needs a fresh skill index for delegation.
+This is the authoritative role-scoped skill-injection policy for both OpenCode and
+Claude Code. It governs delegation prompts only; runtime plugin activation is separate.
 
 ## Hard Rules
 
-- The registry is an INDEX, not a compiler. SKILL.md remains the source of truth.
-- Pass exact skill paths to subagents — never generated summaries.
-- Always write the registry file regardless of persistence mode.
-- Save to Engram as `topic_key: skill-registry` when available.
-- Skip `_shared` directory entries — those are conventions, not skills.
-- Deduplicate by skill name, preferring project-level skills over global.
+- Pass exact paths to subagents; never paste skill summaries.
+- Inject only the target role's mandatory paths and matching conditional paths.
+- Do not inject Caveman, Ponytail, or Karpathy universally.
+- Caveman role guidance is only for user-facing primaries: `orchestrator` and `strategist`.
+- Ponytail is never injected into SDD, review, or infrastructure executors.
+- Judgment-day belongs only to the orchestrator; never inject it into `judge-a` or `judge-b`.
+- The SDD protocol is mandatory for the orchestrator and every `sdd-*` role.
+- `md-style-guide` is mandatory for SDD artifact writers and conditional for other SDD roles when producing Markdown.
 
-## Decision Gates
+## Runtime Plugins
 
-| Situation | Action |
+Runtime plugins are not delegation skills. Do not install, configure, enable, disable,
+or otherwise alter them while applying this registry.
+
+| Plugin | Role-policy effect |
 |---|---|
-| Same skill exists globally and in project | Keep the project-level skill |
-| No skills found | Write an empty registry so agents stop searching blindly |
-| Orchestrator will delegate work | Look up the target agent in the Mandatory Skill Assignments table, then check the Conditional Skill Triggers table for keyword matches in the task text. Inject only these — never "select what seems relevant" |
-| Skill modified or added | Re-run this skill to refresh the index |
+| Caveman | Global runtime integration; do not inject a Caveman package path. Its role guidance applies only to `orchestrator` and `strategist`. |
+| Ponytail | Inject its skill only where this registry permits it. |
 
-## Mandatory Skill Assignments (static, per agent role)
+## Mandatory Role Skills
 
-This table is the single source of truth for `ponytail` vs `karpathy-guidelines` assignment.
-Do not load both on the same agent. Do not load either on agents not listed.
+`orchestrator` is OpenCode's primary name; `tech-orchestrator` is its Claude Code
+mirror and follows the same row. The SDD protocol path is a shared protocol document,
+not a runtime plugin.
 
-| Agent | Mandatory skills (always injected) |
+| Role | Always inject |
 |---|---|
+| orchestrator / tech-orchestrator | caveman, karpathy-guidelines, SDD protocol |
+| strategist | caveman, karpathy-guidelines |
 | builder | ponytail |
-| implementer | ponytail |
 | test-writer | ponytail |
-| sdd-explore | karpathy-guidelines |
-| sdd-propose | karpathy-guidelines |
-| sdd-spec | karpathy-guidelines |
-| sdd-design | karpathy-guidelines |
-| sdd-tasks | karpathy-guidelines |
-| sdd-verify | karpathy-guidelines |
-| sdd-archive | karpathy-guidelines |
+| implementer | ponytail |
+| debugger | karpathy-guidelines |
 | code-reviewer | karpathy-guidelines |
 | judge-a | karpathy-guidelines |
 | judge-b | karpathy-guidelines |
-| strategist | karpathy-guidelines |
-| aws | none — read-only infrastructure, no code written, no feature planned |
-| log-reader | none — read-only infrastructure, no code written, no feature planned |
-| codegraph-maintainer | none — read-only infrastructure, no code written, no feature planned |
+| sdd-explore, sdd-verify | karpathy-guidelines, SDD protocol |
+| sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-archive | karpathy-guidelines, SDD protocol, md-style-guide |
+| aws, log-reader, codegraph-maintainer, engram-maintainer | none |
 
-Agents not listed here (e.g. `debugger`) keep their current skill configuration until
-explicitly audited and added to this table — do not infer a row for them.
+## Conditional Role Skills
 
-## Conditional Skill Triggers (static, per agent, exact keywords)
+Apply a conditional skill only when both the role and task trigger match.
 
-Inject the skill only when the task text contains one of its listed keywords.
-
-| Agent | Conditional skill | Trigger keywords |
+| Skill | Eligible roles | Task trigger |
 |---|---|---|
-| builder | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| builder | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| builder | refactoring-techniques | refactor |
-| builder | senior-architect | architecture patterns, system design, database selection, tech stack evaluation, dependency analysis, trade-off comparisons |
-| builder | software-design-patterns | which design pattern to use, understand a specific pattern, identify the right pattern for a problem |
-| builder | event-schema | domain event, event schema, event-driven, emits event |
-| implementer | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| implementer | refactoring-techniques | refactor |
-| implementer | event-schema | domain event, event schema, event-driven, emits event |
-| test-writer | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| test-writer | event-schema | domain event, event schema, event-driven, emits event |
-| code-reviewer | refactoring-techniques | refactor |
-| code-reviewer | event-schema | domain event, event schema, event-driven, emits event |
-| code-reviewer | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-explore | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| sdd-explore | senior-architect | architecture patterns, system design, database selection, tech stack evaluation, dependency analysis, trade-off comparisons |
-| sdd-explore | software-design-patterns | which design pattern to use, understand a specific pattern, identify the right pattern for a problem |
-| sdd-explore | event-schema | domain event, event schema, event-driven, emits event |
-| sdd-explore | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-propose | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| sdd-propose | senior-architect | architecture patterns, system design, database selection, tech stack evaluation, dependency analysis, trade-off comparisons |
-| sdd-propose | event-schema | domain event, event schema, event-driven, emits event |
-| sdd-propose | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-spec | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| sdd-spec | event-schema | domain event, event schema, event-driven, emits event |
-| sdd-spec | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-design | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| sdd-design | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| sdd-design | senior-architect | architecture patterns, system design, database selection, tech stack evaluation, dependency analysis, trade-off comparisons |
-| sdd-design | software-design-patterns | which design pattern to use, understand a specific pattern, identify the right pattern for a problem |
-| sdd-design | event-schema | domain event, event schema, event-driven, emits event |
-| sdd-design | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-tasks | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| sdd-tasks | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-verify | event-schema | domain event, event schema, event-driven, emits event |
-| sdd-verify | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| sdd-archive | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| sdd-archive | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| strategist | senior-architect | architecture patterns, system design, database selection, tech stack evaluation, dependency analysis, trade-off comparisons |
-| strategist | software-design-patterns | which design pattern to use, understand a specific pattern, identify the right pattern for a problem |
-| strategist | event-schema | domain event, event schema, event-driven, emits event |
-| strategist | md-style-guide | markdown document, report, guide, README, format/clean up/rewrite an existing markdown file |
-| strategist | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| aws | find-docs | library, API, SDK, CLI tool, cloud service, "how do I" + library name, version migration, setup instructions |
-| judge-a | judgment-day | judgment day, dual review, adversarial review |
-| judge-a | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| judge-b | judgment-day | judgment day, dual review, adversarial review |
-| judge-b | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
-| debugger | ponytail | simplify, over-engineered, simpler alternative, YAGNI, less code, unnecessarily complex |
+| find-docs | orchestrator, strategist, builder, test-writer, implementer, debugger, sdd-explore, sdd-design, aws | Library, framework, SDK, API, CLI, cloud service, setup, migration, or API uncertainty. |
+| refactoring-techniques | builder, implementer, debugger, code-reviewer | Refactor or behavior-preserving restructuring. |
+| senior-architect | orchestrator, strategist, sdd-explore, sdd-propose, sdd-design | Architecture, system design, database choice, stack evaluation, dependency analysis, or trade-off comparison. |
+| software-design-patterns | strategist, sdd-explore, sdd-design | Choosing, understanding, or identifying a design pattern. |
+| event-schema | orchestrator, strategist, builder, test-writer, implementer, debugger, code-reviewer, sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-verify | Domain event, event schema, event-driven behavior, or emitted event. |
+| ponytail | debugger | `AUTH: apply-fix`; do not inject for `diagnose-only`. |
+| context-compact | orchestrator, strategist | Context compaction, reset, clear, or state recovery. |
+| skill-registry | orchestrator, builder | Skill installation, removal, creation, movement, rename, registry refresh, or role-policy change. |
+| judgment-day | orchestrator | Adversarial review, dual review, judgment day, or critical review protocol. |
+| md-style-guide | sdd-explore, sdd-verify | Producing Markdown. |
 
-`log-reader` and `codegraph-maintainer` have no conditional skills — keep them free of skill
-injection beyond `caveman` unless this table is explicitly updated.
+## Exact Paths
 
-## Execution Steps
+| Skill or protocol | Path |
+|---|---|
+| ponytail | `/home/andrex/.cache/opencode/packages/@dietrichgebert/ponytail@latest/node_modules/@dietrichgebert/ponytail/skills/ponytail/SKILL.md` |
+| karpathy-guidelines | `/home/andrex/.config/opencode/skills/karpathy-guidelines/SKILL.md` |
+| SDD protocol | `/home/andrex/dev/side-projects/harness-abysal/configs/common-sdd.md` |
+| md-style-guide | `/home/andrex/.config/opencode/skills/md-style-guide/SKILL.md` |
+| find-docs | `/home/andrex/.config/opencode/skills/find-docs/SKILL.md` |
+| refactoring-techniques | `/home/andrex/.config/opencode/skills/refactoring-techniques/SKILL.md` |
+| senior-architect | `/home/andrex/.config/opencode/skills/senior-architect/SKILL.md` |
+| software-design-patterns | `/home/andrex/.config/opencode/skills/software-design-patterns/SKILL.md` |
+| event-schema | `/home/andrex/.config/opencode/skills/event-schema/SKILL.md` |
+| context-compact | `/home/andrex/.config/opencode/skills/context-compact/SKILL.md` |
+| skill-registry | `/home/andrex/dev/side-projects/harness-abysal/opencode/skills/skill-registry/SKILL.md` |
+| judgment-day | `/home/andrex/.config/opencode/skills/judgment-day/SKILL.md` |
 
-1. Scan skill directories for `*/SKILL.md`:
-   - `~/.config/opencode/skills/` (global)
-   - `{project}/.opencode/skills/` (project-level, if exists)
-2. Read frontmatter only — extract `name` and `description` trigger text.
-3. Write `.opencode/skill-registry.md` with:
-   ```
-   # Skill Registry
+## Delegation Procedure
 
-   | Skill | Trigger | Scope | Path |
-   |-------|---------|-------|------|
-   | context-compact | compact, clear, context reset | global | ~/.config/opencode/skills/context-compact/SKILL.md |
-   | event-schema | domain event, event schema | global | ~/.config/opencode/skills/event-schema/SKILL.md |
-   ```
-4. Persist to Engram:
-   ```
-   title: "skill-registry"
-   topic_key: "skill-registry"
-   type: "config"
-   content: {registry markdown}
-   ```
-5. Return registry path, skill count, and cache status.
+1. Identify the target role.
+2. Add every available exact path from that role's mandatory row. Caveman is supplied by the global runtime, not an injected package path.
+3. Add only conditional paths whose role and trigger both match.
+4. Put the resulting exact paths under `## Skills to load before work` in the delegation prompt.
+5. If no paths apply, include an empty `SKILLS:` field; do not invent a default skill.
 
-## Output Contract
+## Registry Maintenance
 
-Return:
-- Registry file path
-- Number of indexed skills
-- Any skipped or duplicate skills
+When skills are installed, removed, created, moved, or renamed, scan global and
+project `*/SKILL.md` directories, prefer project skills over duplicate globals, skip
+`_shared`, and update the generated registry index. Save the resulting index to Engram
+with `topic_key: skill-registry`.

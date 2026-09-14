@@ -9,9 +9,10 @@ config on any of my machines.
 ./scripts/install.sh
 ```
 
-> [!WARNING]
-> **Local cache-pinned OpenCode paths**
-> `opencode/plugins/caveman-native.js:6` and `opencode/tui.json:4` point to personal npm/npx and OpenCode package caches. Harness assumes those local installs exist; cache cleanup or package updates can break them. Before install or use, check paths; if missing, rerun package, enable, or install command that created affected plugin.
+After deploying this harness's configuration, the installer shallow-clones current
+`main` from the upstream Caveman repository into a temporary directory and runs its
+official installer for Claude Code and OpenCode. It requires `git` and `node`,
+modifies user-level configuration, and removes the temporary clone on exit.
 
 Installer preserves replaced targets in timestamped `<target>.backups/` directories. Remove
 only installer backup directories without installing:
@@ -76,6 +77,7 @@ tech-orchestrator          strategist
         ├── judge-a/judge-b → blind dual adversarial review (judgment-day)
         ├── debugger        → root cause + fix (per AUTH)
         ├── codegraph-maintainer → CodeGraph index health
+        ├── engram-maintainer → explicit memory review/curation
         └── sdd-verify → sdd-archive → PR description ready
 ```
 
@@ -103,6 +105,7 @@ otherwise implementation goes straight to `builder` or the TDD loop (`test-write
 | `sub-agents/infrastructure/aws` | Read-only AWS investigation. |
 | `sub-agents/infrastructure/log-reader` | Read-only large log synthesis. |
 | `sub-agents/infrastructure/codegraph-maintainer` | Checks CodeGraph index status; init/sync/index only when explicit. |
+| `sub-agents/infrastructure/engram-maintainer` | Reviews Engram memory; delete, purge, and export require native confirmation. |
 
 Each SDD phase agent is an **executor**, not a sub-orchestrator: it does the
 phase's work itself, never delegates further, and returns a structured
@@ -111,7 +114,7 @@ phase's work itself, never delegates further, and returns a structured
 ## Commands (`commands/`)
 
 Slash-command entry points that route into the modes above: `/plan`,
-`/implement`, `/explore`, `/debug`, `/review`, `/judgment-day`, `/codegraph`.
+`/implement`, `/explore`, `/debug`, `/review`, `/judgment-day`, `/codegraph`, `/memory`.
 
 ## CodeGraph Maintenance
 
@@ -130,6 +133,10 @@ Explicit maintenance:
 ./scripts/codegraph-health.sh --index /path/to/repo
 codegraph-health --sync /path/to/repo
 ```
+
+## Memory Maintenance
+
+`/memory review [project]` and `/memory doctor [project]` are read-only. `/memory delete <observation-id>` inspects then soft-deletes one observation after native confirmation. `/memory purge <project>` hard-deletes a project after native confirmation. `/memory export [project]` writes an export only after native confirmation.
 
 ## Skills (`skills/`)
 

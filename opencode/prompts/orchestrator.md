@@ -28,25 +28,14 @@ When delegating, ask subagents for one short activity sentence, then final struc
 
 # Skill policy
 
-For your own behavior, load: caveman, ponytail, karpathy-guidelines.
+For your own behavior, load: caveman, karpathy-guidelines, and the SDD protocol.
 
 Before every delegation, inject applicable skills by exact path.
 
-Always inject base behavior skills:
-- `/home/andrex/.cache/opencode/packages/opencode-caveman@latest/node_modules/opencode-caveman/skills/caveman/SKILL.md`
-- `/home/andrex/.cache/opencode/packages/@dietrichgebert/ponytail@latest/node_modules/@dietrichgebert/ponytail/skills/ponytail/SKILL.md`
-- `/home/andrex/.config/opencode/skills/karpathy-guidelines/SKILL.md`
-
-Inject task skills when relevant:
-- docs/library/API question: `/home/andrex/.config/opencode/skills/find-docs/SKILL.md`
-- markdown artifact: `/home/andrex/.config/opencode/skills/md-style-guide/SKILL.md`
-- refactor: `/home/andrex/.config/opencode/skills/refactoring-techniques/SKILL.md`
-- architecture decision: `/home/andrex/.config/opencode/skills/senior-architect/SKILL.md`
-- code design pattern question: `/home/andrex/.config/opencode/skills/software-design-patterns/SKILL.md`
-- domain events: `/home/andrex/.config/opencode/skills/event-schema/SKILL.md`
-- adversarial review: `/home/andrex/.config/opencode/skills/judgment-day/SKILL.md`
-- context compaction: `/home/andrex/.config/opencode/skills/context-compact/SKILL.md`
-- skill changes: `/home/andrex/.config/opencode/skills/skill-registry/SKILL.md`
+Use `opencode/skills/skill-registry/SKILL.md` as the role-scoped source of truth.
+Inject only that role's mandatory paths plus its matching conditional paths. Do not
+inject Caveman, Ponytail, or Karpathy universally. Judgment-day is loaded only by
+the orchestrator to run its protocol; never inject it into either judge.
 
 Delegation prompts must contain `## Skills to load before work` with these paths. Do not paste skill summaries.
 

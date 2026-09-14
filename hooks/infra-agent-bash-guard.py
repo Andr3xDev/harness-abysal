@@ -3,8 +3,7 @@
 plus an Edit guard for the "debugger" agent.
 
 The Bash guard mirrors the allow-lists already defined in
-~/.config/opencode/opencode.json for the "aws", "log-reader",
-"codegraph-maintainer" and "code-reviewer" agents. Runs only against
+~/.config/opencode/opencode.json for restricted agents. Runs only against
 tool_name == "Bash".
 Any other agent_type (including the main thread, agent_type absent) is
 passed through untouched -- this hook must never affect agents outside
@@ -39,6 +38,36 @@ GIT_ALLOW = [
 SHELL_METACHARACTERS = ["&&", ";", "|", "$(", "`", "\n", ">", "<"]
 
 RULES = {
+    "sdd-explore": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec context*", "openspec doctor*", "openspec list*"] + GIT_ALLOW,
+    },
+    "sdd-propose": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + GIT_ALLOW,
+    },
+    "sdd-spec": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + GIT_ALLOW,
+    },
+    "sdd-design": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + GIT_ALLOW,
+    },
+    "sdd-tasks": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + GIT_ALLOW,
+    },
+    "sdd-archive": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": ["openspec status*", "openspec validate*", "openspec archive*", "openspec show*", "openspec instructions*"] + GIT_ALLOW,
+    },
     "aws": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
@@ -98,6 +127,18 @@ RULES = {
             "codegraph affected*",
         ] + GIT_ALLOW,
     },
+    "engram-maintainer": {
+        "deny": GIT_DENY,
+        "ask": ["engram delete *", "engram export *"],
+        "allow": [
+            "engram context*",
+            "engram search*",
+            "engram stats*",
+            "engram projects list*",
+            "engram doctor*",
+            "engram timeline*",
+        ],
+    },
     "code-reviewer": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
@@ -128,6 +169,14 @@ RULES = {
         ] + GIT_ALLOW,
     },
 }
+
+RULES["sdd-verify"] = {
+    "deny": GIT_DENY,
+    "ask": GIT_ASK,
+    "allow": RULES["code-reviewer"]["allow"] + ["openspec status*", "openspec validate*"],
+}
+RULES["judge-a"] = RULES["code-reviewer"]
+RULES["judge-b"] = RULES["code-reviewer"]
 
 
 EDIT_ASK_AGENTS = {"debugger"}
@@ -224,8 +273,17 @@ def _selftest() -> int:
     cases = [
         ("aws", "aws logs describe-log-groups && git push origin main", "deny"),
         ("codegraph-maintainer", "codegraph status && git commit -m pwned", "deny"),
+        ("engram-maintainer", "engram context", "allow"),
+        ("engram-maintainer", "engram delete 42", "ask"),
+        ("engram-maintainer", "engram delete project demo --hard", "ask"),
+        ("engram-maintainer", "engram export backup.json", "ask"),
+        ("engram-maintainer", "engram save title text", "deny"),
         ("aws", "aws logs describe-log-groups", "allow"),
         ("code-reviewer", "npm test", "allow"),
+        ("judge-a", "pytest", "allow"),
+        ("sdd-explore", "openspec list --json", "allow"),
+        ("sdd-propose", "npm test", "deny"),
+        ("sdd-verify", "openspec validate change --json", "allow"),
         ("code-reviewer", "npm test && git push origin main", "deny"),
     ]
     for agent_type, command, expected in cases:

@@ -8,7 +8,6 @@ Build or modify code/config/docs without mandatory TDD. Use the smallest correct
 # Skills
 
 Load before work:
-- caveman
 - ponytail
 
 Also load when relevant: find-docs, md-style-guide, refactoring-techniques, senior-architect, software-design-patterns, event-schema.

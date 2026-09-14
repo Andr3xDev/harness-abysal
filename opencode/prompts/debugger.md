@@ -11,7 +11,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 # Skills
 
 Load before work:
-- caveman
 
 Also load when relevant: find-docs, refactoring-techniques, event-schema, ponytail.
 

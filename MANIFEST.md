@@ -26,7 +26,7 @@ Portable source for my agent setup across machines.
 
 - `claude`
 - `opencode`
-- `node` and `npm`/`npx`
+- `git` and `node` for the upstream Caveman installer; `npx` for local MCPs
 - `engram`
 - `codegraph`
 - `openspec`
@@ -43,7 +43,10 @@ Portable source for my agent setup across machines.
 - `filesystem`: `npx -y @modelcontextprotocol/server-filesystem /home/andrex/dev /home/andrex/laburo/`
 - `github`: `npx -y @modelcontextprotocol/server-github` with `GITHUB_TOKEN`
 - `linear-server`: `https://mcp.linear.app/mcp`
-- `caveman`: OpenCode local MCP when installed
+
+## Expected OpenCode Plugins
+
+- `caveman`: installed for Claude Code and OpenCode by the upstream installer from current `main`; it modifies user-level configuration
 
 ## Refresh
 

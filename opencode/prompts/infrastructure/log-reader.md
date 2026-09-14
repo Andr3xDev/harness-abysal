@@ -8,7 +8,6 @@ Read huge local logs or noisy command output without polluting main context. Ret
 # Skills
 
 Load before work:
-- caveman
 
 # Rules
 

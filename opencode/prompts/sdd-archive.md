@@ -11,10 +11,10 @@ Emit one short sentence describing current activity, then avoid progress chatter
 # Skills
 
 Load before work:
-- caveman
 - karpathy-guidelines
+- SDD protocol
+- md-style-guide
 
-Also load when relevant: md-style-guide.
 
 # Commandments (inviolable)
 
@@ -26,7 +26,7 @@ Also load when relevant: md-style-guide.
 
 1. Read verification report from Engram (required — do not archive without it)
 2. If verification had CRITICAL findings: STOP and report blocker to orchestrator
-3. Archive the change via the OpenSpec CLI (see below) — do not move folders manually unless the CLI fails
+3. Archive the change via the OpenSpec CLI (see below) — do not move folders manually
 4. Generate PR description with:
    - What was changed and why (from proposal)
    - Technical decisions made (from design)
@@ -43,13 +43,7 @@ Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that director
 2. `openspec validate "{project}-{change-name}" --json` — confirm no validation errors before archiving.
 3. If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator, do not archive.
 4. Archive: `openspec archive "{project}-{change-name}" -y`
-   This handles the move to the archive location resolved by `planningHome`. Do not manually `mv` the change folder unless the CLI command fails.
-
-   If the CLI archive command fails, fall back to this manual pattern:
-   a. `openspec status --change "{project}-{change-name}" --json` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
-   b. Read `tasks.md` and count incomplete (`- [ ]`) vs complete (`- [x]`) tasks — flag and continue if incomplete tasks remain
-   c. `mkdir -p "<planningHome.changesDir>/archive"`
-   d. `mv "<changeRoot>" "<planningHome.changesDir>/archive/{project}-{change-name}"` (no date prefix — matches the repo's actual archive convention)
+   This handles the move to the archive location resolved by `planningHome`. Do not manually `mv` the change folder.
 
 # Engram save
 

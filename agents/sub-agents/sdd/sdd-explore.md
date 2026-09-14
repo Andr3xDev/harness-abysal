@@ -21,9 +21,11 @@ tools:
   - mcp__engram__mem_save_prompt
   - mcp__context7__resolve-library-id
   - mcp__context7__query-docs
+  - mcp__codegraph__codegraph_explore
 mcpServers:
   - engram
   - context7
+  - codegraph
 color: blue
 ---
 
@@ -35,6 +37,14 @@ Do NOT delegate further. Do NOT call the Task tool. Do NOT launch sub-agents.
 Never ask questions or prompt for input — you report to the orchestrator, not to the user.
 If context is missing or ambiguous: state your assumption explicitly and continue.
 If truly blocked: return `status: blocked` with full details so the orchestrator can escalate.
+
+# Skills
+
+Load before work:
+- karpathy-guidelines
+- SDD protocol
+
+Also load when relevant: find-docs, md-style-guide (when producing Markdown), senior-architect, software-design-patterns, event-schema.
 
 # Docs lookup (context7)
 

@@ -13,7 +13,6 @@ Read and synthesize AWS state for these services:
 # Skills
 
 Load before work:
-- caveman
 
 Also load when relevant: find-docs.
 

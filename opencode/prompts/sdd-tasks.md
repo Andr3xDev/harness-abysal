@@ -11,10 +11,10 @@ Emit one short sentence describing current activity, then avoid progress chatter
 # Skills
 
 Load before work:
-- caveman
 - karpathy-guidelines
+- SDD protocol
+- md-style-guide
 
-Also load when relevant: md-style-guide.
 
 # Commandments (inviolable)
 

@@ -127,5 +127,13 @@ tar \
   --exclude='./logs' \
   -C "$ROOT/opencode" -cf - . | tar -C "$HOME/.config/opencode" -xf -
 
+caveman_dir="$(mktemp -d)"
+trap 'rm -rf -- "$caveman_dir"' EXIT
+git clone --depth 1 --branch main https://github.com/JuliusBrussee/caveman.git "$caveman_dir"
+(
+  cd "$caveman_dir"
+  node bin/install.js --only claude --only opencode
+)
+
 echo "installed code-agents config"
 echo "next: set GITHUB_TOKEN, authenticate Linear/Claude connectors, ensure ~/.local/bin is in PATH, then run: claude doctor && opencode debug config"

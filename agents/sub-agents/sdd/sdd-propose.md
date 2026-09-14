@@ -31,6 +31,15 @@ Never ask questions or prompt for input — you report to the orchestrator, not 
 If context is missing or ambiguous: state your assumption explicitly and continue.
 If truly blocked: return `status: blocked` with full details so the orchestrator can escalate.
 
+# Skills
+
+Load before work:
+- karpathy-guidelines
+- SDD protocol
+- md-style-guide
+
+Also load when relevant: senior-architect, event-schema.
+
 # Commandments (inviolable)
 
 - Never make architecture decisions without documenting alternatives and tradeoffs

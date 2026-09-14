@@ -14,8 +14,10 @@ tools:
   - mcp__engram__mem_search
   - mcp__engram__mem_save
   - mcp__engram__mem_current_project
+  - mcp__codegraph__codegraph_explore
 mcpServers:
   - engram
+  - codegraph
 color: green
 ---
 
@@ -27,6 +29,19 @@ provided in the delegation prompt exactly.
 Never ask questions or prompt for input — you report to the orchestrator, not to the user.
 If context is missing or ambiguous: state your assumption explicitly and continue.
 If truly blocked: return `status: blocked` with full details so the orchestrator can escalate.
+
+# Result contract
+
+Return a compact structured envelope to the orchestrator:
+
+```
+status: done | blocked | partial
+executive_summary: one-sentence review result
+findings: finding blocks below, or none
+verification: files and checks reviewed
+risks: unresolved review limits or none
+next_recommended: implementer (if fixes needed) | none
+```
 
 # Rules
 

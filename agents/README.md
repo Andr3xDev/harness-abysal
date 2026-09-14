@@ -6,7 +6,7 @@
 
 ## What is this directory
 
-This directory holds the sub-agent definitions used by Claude Code for the multi-agent engineering harness: `strategist.md`, `tech-orchestrator.md`, and the phase agents under `sub-agents/sdd/` (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-verify`, `sdd-archive`), plus `builder`, `implementer`, `test-writer`, `code-reviewer`, `judge-a`/`judge-b`, and the read-only infrastructure agents (`aws`, `log-reader`, `codegraph-maintainer`).
+This directory holds the sub-agent definitions used by Claude Code for the multi-agent engineering harness: `strategist.md`, `tech-orchestrator.md`, and the phase agents under `sub-agents/sdd/` (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-verify`, `sdd-archive`), plus `builder`, `implementer`, `test-writer`, `code-reviewer`, `judge-a`/`judge-b`, and infrastructure agents (`aws`, `log-reader`, `codegraph-maintainer`, `engram-maintainer`).
 
 It is a mirror of `/home/andrex/.config/opencode/prompts/` (OpenCode). Both mirrors must stay behaviorally equivalent — any change made to an agent in one mirror must be replicated in the other.
 
@@ -49,20 +49,28 @@ This boundary is a prompt-level lock, not a technical one — Claude Code's `Tas
 
 ## How skills get injected
 
-The authoritative table lives in `/home/andrex/.claude/skills/skill-registry/SKILL.md` under "Mandatory Skill Assignments" and "Conditional Skill Triggers." Summary of the mandatory assignments:
+The authoritative role policy lives in `opencode/skills/skill-registry/SKILL.md` and is shared by both runtimes. Its mandatory assignments are:
 
 | Agent | Mandatory skill |
 |---|---|
 | builder | ponytail |
 | implementer | ponytail |
 | test-writer | ponytail |
-| sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-verify, sdd-archive | karpathy-guidelines |
-| code-reviewer, judge-a, judge-b, strategist | karpathy-guidelines |
-| aws, log-reader, codegraph-maintainer | none — read-only infrastructure |
+| orchestrator, strategist | caveman, karpathy-guidelines |
+| sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-verify, sdd-archive | karpathy-guidelines, SDD protocol, md-style-guide |
+| debugger, code-reviewer, judge-a, judge-b | karpathy-guidelines |
+| aws, log-reader, codegraph-maintainer, engram-maintainer | none — infrastructure |
 
-`ponytail` and `karpathy-guidelines` are mutually exclusive on a given agent: `ponytail` only goes to agents that write code (`builder`, `implementer`, `test-writer`), `karpathy-guidelines` only to planning/review agents. The registry explicitly says do not load both on the same agent, and do not load either on agents not listed.
+`caveman` is only injected into user-facing primaries (`orchestrator`, `strategist`).
+`ponytail` is mandatory only for code writers and conditional for an `apply-fix` debugger task.
+It is never injected into SDD, review, or infrastructure executors. `karpathy-guidelines`
+is mandatory for orchestration, strategy, SDD, review, and debugging.
 
-Conditional skills (`find-docs`, `md-style-guide`, `refactoring-techniques`, `senior-architect`, `software-design-patterns`, `event-schema`, `judgment-day`) are injected only when the task text matches the listed trigger keywords for that agent — see the Conditional Skill Triggers table in the registry for the exact keyword lists per agent.
+Conditional skills (`find-docs`, `refactoring-techniques`, `senior-architect`,
+`software-design-patterns`, `event-schema`, `context-compact`, and `skill-registry`)
+are injected only for roles and tasks listed in the registry. Judgment-day belongs only
+to the orchestrator, never the judges. Runtime plugin activation is separate from this
+delegation policy.
 
 <br>
 
@@ -70,14 +78,20 @@ Conditional skills (`find-docs`, `md-style-guide`, `refactoring-techniques`, `se
 
 In OpenCode, permissions are granular per command via `opencode.json` (`allow`/`ask`/`deny` per agent). Claude Code has no equivalent native mechanism — there is no per-agent command allow-list built into the agent frontmatter beyond `tools`/`disallowedTools`. The gap is closed with `PreToolUse` hooks registered in `settings.json`.
 
-`/home/andrex/.claude/hooks/infra-agent-bash-guard.py` is the reference implementation of this pattern. It intercepts `Bash` calls, keyed on `agent_type`, mirroring the allow-lists already defined in `opencode.json` for the same agents. `code-reviewer` joined this enforcement pattern so it can run tests/linters to verify coverage/quality claims without gaining open shell access.
+`/home/andrex/.claude/hooks/infra-agent-bash-guard.py` is the reference implementation of this pattern. It intercepts `Bash` calls, keyed on `agent_type`, mirroring the role-scoped OpenCode policy. SDD agents are limited to their documented `openspec` and read-only Git commands; reviewers and judges can run tests, linters, and read-only Git without gaining open shell access.
 
 | Agent | Allow | Ask | Deny |
 |---|---|---|---|
 | aws | `aws logs describe-*`, `aws dynamodb *`, `aws lambda get-*`/`list-*`, `aws ecs describe-*`/`list-*`, `aws ec2 describe-*`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
 | log-reader | `rg *`, `wc *`, `du *`, `ls *`, `zcat *`, `gzip -cd *`, `journalctl *`, `docker logs *`, `kubectl logs *`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
 | codegraph-maintainer | `codegraph status/query/explore/files/node/callers/callees/impact/affected`, `git *` | `git reset --hard*`, `codegraph unlock/init/sync/index*`, `codegraph-health*` | `git commit*`, `git push*` |
+| engram-maintainer | `engram context/search/stats/projects list/doctor/timeline` | `engram delete *`, `engram export *` | all unrelated shell commands |
 | code-reviewer | `npm test*`/`npm run test*`/`npm run lint*`, `yarn test*`/`lint*`, `pnpm test*`/`lint*`, `pytest*`, `python -m pytest*`, `go test*`/`vet*`, `cargo test*`/`clippy*`, `ruff*`, `eslint*`, `flake8*`, `mypy*`, `rubocop*`, `bundle exec rspec*`, `mvn test*`, `gradle test*`, `make test*`, `tox*`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
+| judge-a, judge-b | Same test/lint and read-only Git commands as `code-reviewer` | `git reset --hard*` | `git commit*`, `git push*` |
+| sdd-explore | `openspec context`/`doctor`/`list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-propose, sdd-spec, sdd-design, sdd-tasks | Documented `openspec` proposal/spec/design/task commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-verify | Documented `openspec` validation plus the reviewer test/lint and read-only Git commands | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-archive | Documented `openspec` archive commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 
 Any command not matched by `allow` or `ask` falls through to `deny`. Any `agent_type` not in the `RULES` dict passes through untouched — the hook never affects the main thread or agents outside this list.
 
@@ -89,7 +103,7 @@ This is the pattern to reuse if another agent needs a Bash restriction in the fu
 
 Given that limitation, the technical enforcement added is unconditional: `infra-agent-bash-guard.py` now also intercepts `Edit` (via a second `PreToolUse` matcher in `settings.json`), and returns `"ask"` for every `Edit` call made by `agent_type == "debugger"`, regardless of AUTH. This does not break `apply-fix` mode — the user just confirms, as expected — but it closes the gap where a `diagnose-only` delegation could otherwise edit production code with nothing but a prompt-level promise standing in the way. It is a floor (always confirm), not a precise gate (confirm only when unauthorized); the AUTH text in the delegation prompt is still what tells the human confirming whether the edit was actually authorized.
 
-Coverage after this change: `aws` / `log-reader` / `codegraph-maintainer` are Bash-gated as above; `debugger` is Edit-gated as described here. Bash behavior for `debugger` is unchanged (still full framework/native permissions, no hook rule).
+Coverage after this change: SDD agents, `code-reviewer`, `judge-a`, `judge-b`, `aws`, `log-reader`, `codegraph-maintainer`, and `engram-maintainer` are Bash-gated as above; `debugger` is Edit-gated as described here. Bash behavior for `debugger` is unchanged (still full framework/native permissions, no hook rule).
 
 In OpenCode, the mirrored change is `permission.edit` for the `debugger` agent in `opencode.json`, flipped from `"allow"` to `"ask"` — same reasoning, same limitation (OpenCode's permission engine also can't see per-delegation AUTH text, only the static per-agent config).
 

@@ -11,7 +11,6 @@ Emit one short sentence describing current activity, then avoid progress chatter
 # Skills
 
 Load before work:
-- caveman
 - ponytail
 
 Also load when relevant: find-docs, event-schema.

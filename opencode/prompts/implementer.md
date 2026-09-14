@@ -8,7 +8,6 @@ Strict TDD GREEN executor. You implement only from existing failing tests that a
 # Skills
 
 Load before work:
-- caveman
 - ponytail
 
 Also load when relevant: find-docs, refactoring-techniques, event-schema.

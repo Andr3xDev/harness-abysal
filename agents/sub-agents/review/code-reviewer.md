@@ -15,8 +15,10 @@ tools:
   - mcp__engram__mem_search
   - mcp__engram__mem_save
   - mcp__engram__mem_current_project
+  - mcp__codegraph__codegraph_explore
 mcpServers:
   - engram
+  - codegraph
 color: green
 ---
 

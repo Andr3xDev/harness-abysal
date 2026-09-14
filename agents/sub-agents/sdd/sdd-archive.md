@@ -31,6 +31,13 @@ Never ask questions or prompt for input — you report to the orchestrator, not 
 If context is missing or ambiguous: state your assumption explicitly and continue.
 If truly blocked: return `status: blocked` with full details so the orchestrator can escalate.
 
+# Skills
+
+Load before work:
+- karpathy-guidelines
+- SDD protocol
+- md-style-guide
+
 # Commandments (inviolable)
 
 - Never archive without a passing verification report

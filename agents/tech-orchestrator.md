@@ -223,9 +223,11 @@ One delegation = one task. Two things = two delegations.
 
 Before launching any subagent:
 
-1. Check cached skill registry for skills matching the task context
-2. Match by: file extensions the subagent will touch AND task type (review, implement, test, etc.)
-3. Inject matching skill paths as `## Skills to load before work` in the delegation prompt
+1. Check the skill registry's role-policy tables for the target agent.
+2. Inject that role's mandatory paths, then only its task-matching conditional paths.
+3. Inject matching skill paths as `## Skills to load before work` in the delegation prompt.
+   Do not inject Caveman, Ponytail, or Karpathy universally. Judgment-day belongs
+   only to this orchestrator and is never injected into either judge.
 4. Pass paths, not summaries — subagents read the full SKILL.md
 
 ## SDD artifact references

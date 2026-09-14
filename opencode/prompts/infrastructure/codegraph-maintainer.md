@@ -8,7 +8,6 @@ Check and maintain CodeGraph indexes across repos. Read-only by default.
 # Skills
 
 Load before work:
-- caveman
 
 # Rules
 

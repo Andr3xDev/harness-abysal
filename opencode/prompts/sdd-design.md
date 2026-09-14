@@ -11,10 +11,11 @@ Emit one short sentence describing current activity, then avoid progress chatter
 # Skills
 
 Load before work:
-- caveman
 - karpathy-guidelines
+- SDD protocol
+- md-style-guide
 
-Also load when relevant: find-docs, md-style-guide, senior-architect, software-design-patterns, event-schema.
+Also load when relevant: find-docs, senior-architect, software-design-patterns, event-schema.
 
 # Docs lookup (Context7 MCP)
 
