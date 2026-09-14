@@ -168,6 +168,16 @@ RULES = {
             "tox*",
         ] + GIT_ALLOW,
     },
+    "echor-onboarder": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": GIT_ALLOW + ["git rev-parse*", "ls *", "rg *", "cat *"],
+    },
+    "echor-validator": {
+        "deny": GIT_DENY,
+        "ask": GIT_ASK,
+        "allow": GIT_ALLOW + ["git rev-parse*", "ls *", "rg *", "cat *"],
+    },
 }
 
 RULES["sdd-verify"] = {
@@ -177,6 +187,7 @@ RULES["sdd-verify"] = {
 }
 RULES["judge-a"] = RULES["code-reviewer"]
 RULES["judge-b"] = RULES["code-reviewer"]
+RULES["echor-updater"] = RULES["echor-onboarder"]
 
 
 EDIT_ASK_AGENTS = {"debugger"}
@@ -285,6 +296,11 @@ def _selftest() -> int:
         ("sdd-propose", "npm test", "deny"),
         ("sdd-verify", "openspec validate change --json", "allow"),
         ("code-reviewer", "npm test && git push origin main", "deny"),
+        ("echor-onboarder", "git rev-parse --short HEAD", "allow"),
+        ("echor-onboarder", "rg -l lucyna /home/andrex/dev/some-repo", "allow"),
+        ("echor-onboarder", "git commit -m x", "deny"),
+        ("echor-updater", "ls /home/andrex/dev/echor/projects", "allow"),
+        ("echor-validator", "git push origin main", "deny"),
     ]
     for agent_type, command, expected in cases:
         decision, _ = decide(agent_type, command)

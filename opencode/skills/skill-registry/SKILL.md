@@ -4,7 +4,7 @@ description: "Trigger: update skills, skill registry, refresh skills, or role sk
 license: MIT
 metadata:
   author: custom
-  version: "1.1"
+  version: "1.2"
 ---
 
 ## Purpose
@@ -53,6 +53,7 @@ not a runtime plugin.
 | sdd-explore, sdd-verify | karpathy-guidelines, SDD protocol |
 | sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-archive | karpathy-guidelines, SDD protocol, md-style-guide |
 | aws, log-reader, codegraph-maintainer, engram-maintainer | none |
+| echor-onboarder, echor-updater, echor-consultador, echor-validator | echor-vault |
 
 ## Conditional Role Skills
 
@@ -60,7 +61,7 @@ Apply a conditional skill only when both the role and task trigger match.
 
 | Skill | Eligible roles | Task trigger |
 |---|---|---|
-| find-docs | orchestrator, strategist, builder, test-writer, implementer, debugger, sdd-explore, sdd-design, aws | Library, framework, SDK, API, CLI, cloud service, setup, migration, or API uncertainty. |
+| find-docs | orchestrator, strategist, builder, test-writer, implementer, debugger, sdd-explore, sdd-design, aws, echor-onboarder, echor-updater | Library, framework, SDK, API, CLI, cloud service, setup, migration, or API uncertainty. |
 | refactoring-techniques | builder, implementer, debugger, code-reviewer | Refactor or behavior-preserving restructuring. |
 | senior-architect | orchestrator, strategist, sdd-explore, sdd-propose, sdd-design | Architecture, system design, database choice, stack evaluation, dependency analysis, or trade-off comparison. |
 | software-design-patterns | strategist, sdd-explore, sdd-design | Choosing, understanding, or identifying a design pattern. |
@@ -87,6 +88,7 @@ Apply a conditional skill only when both the role and task trigger match.
 | context-compact | `/home/andrex/.config/opencode/skills/context-compact/SKILL.md` |
 | skill-registry | `/home/andrex/dev/side-projects/harness-abysal/opencode/skills/skill-registry/SKILL.md` |
 | judgment-day | `/home/andrex/.config/opencode/skills/judgment-day/SKILL.md` |
+| echor-vault | `/home/andrex/.config/opencode/skills/echor-vault/SKILL.md` |
 
 ## Delegation Procedure
 

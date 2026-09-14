@@ -6,7 +6,7 @@
 
 ## What is this directory
 
-This directory holds the sub-agent definitions used by Claude Code for the multi-agent engineering harness: `strategist.md`, `tech-orchestrator.md`, and the phase agents under `sub-agents/sdd/` (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-verify`, `sdd-archive`), plus `builder`, `implementer`, `test-writer`, `code-reviewer`, `judge-a`/`judge-b`, and infrastructure agents (`aws`, `log-reader`, `codegraph-maintainer`, `engram-maintainer`).
+This directory holds the sub-agent definitions used by Claude Code for the multi-agent engineering harness: `strategist.md`, `tech-orchestrator.md`, and the phase agents under `sub-agents/sdd/` (`sdd-explore`, `sdd-propose`, `sdd-spec`, `sdd-design`, `sdd-tasks`, `sdd-verify`, `sdd-archive`), plus `builder`, `implementer`, `test-writer`, `code-reviewer`, `judge-a`/`judge-b`, infrastructure agents (`aws`, `log-reader`, `codegraph-maintainer`, `engram-maintainer`), and the vault agents under `sub-agents/echor/` (`echor-onboarder`, `echor-updater`, `echor-consultador`, `echor-validator`).
 
 It is a mirror of `/home/andrex/.config/opencode/prompts/` (OpenCode). Both mirrors must stay behaviorally equivalent — any change made to an agent in one mirror must be replicated in the other.
 
@@ -60,6 +60,7 @@ The authoritative role policy lives in `opencode/skills/skill-registry/SKILL.md`
 | sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-tasks, sdd-verify, sdd-archive | karpathy-guidelines, SDD protocol, md-style-guide |
 | debugger, code-reviewer, judge-a, judge-b | karpathy-guidelines |
 | aws, log-reader, codegraph-maintainer, engram-maintainer | none — infrastructure |
+| echor-onboarder, echor-updater, echor-consultador, echor-validator | echor-vault |
 
 `caveman` is only injected into user-facing primaries (`orchestrator`, `strategist`).
 `ponytail` is mandatory only for code writers and conditional for an `apply-fix` debugger task.
@@ -71,6 +72,23 @@ Conditional skills (`find-docs`, `refactoring-techniques`, `senior-architect`,
 are injected only for roles and tasks listed in the registry. Judgment-day belongs only
 to the orchestrator, never the judges. Runtime plugin activation is separate from this
 delegation policy.
+
+<br>
+
+## Echor vault agents
+
+`sub-agents/echor/` mirrors the four agents that maintain Echor, the Obsidian vault at `~/dev/echor` centralizing knowledge about the user's 100+ repos. All four load the shared `echor-vault` skill (vault paths, naming, frontmatter schema, read recipes, write rules) before doing any work.
+
+| Agent | Role | Writes |
+|---|---|---|
+| echor-onboarder | Creates the vault entry for a repo that has none | `~/dev/echor/projects/<slug>/index.md` |
+| echor-updater | Detects what changed in a repo and updates its existing vault entry in place | edits existing `index.md` |
+| echor-consultador | Read-only query service over the vault | nothing, ever |
+| echor-validator | Read-only consistency audit, vault versus real code | nothing, report only |
+
+`echor-onboarder` and `echor-validator` share the same read-only Git and inspection allow-list (`git status*`, `git log*`, `git diff*`, `git show*`, `git rev-parse*`, `ls *`, `rg *`, `cat *`); `git commit*`/`git push*` are denied and `git reset --hard*` requires confirmation. `echor-updater` uses the same Bash allow-list but only `edit` (no `write`), since it only ever modifies an existing note. `echor-consultador` has no Bash access at all — `read`/`glob`/`grep` only, nothing else.
+
+`/echor` (`commands/echor.md`, mirrored at `opencode/command/echor.md`) routes to the four agents by subcommand: `onboard <repo-path>`, `update <slug|all>`, `ask <question>`, `validate [slug|all]`.
 
 <br>
 
@@ -92,6 +110,9 @@ In OpenCode, permissions are granular per command via `opencode.json` (`allow`/`
 | sdd-propose, sdd-spec, sdd-design, sdd-tasks | Documented `openspec` proposal/spec/design/task commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | sdd-verify | Documented `openspec` validation plus the reviewer test/lint and read-only Git commands | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | sdd-archive | Documented `openspec` archive commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| echor-onboarder, echor-validator | Read-only Git (`status`/`log`/`diff`/`show`/`rev-parse`), `ls *`, `rg *`, `cat *` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| echor-updater | Same read-only Git and inspection commands as `echor-onboarder` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| echor-consultador | none | none | all shell commands |
 
 Any command not matched by `allow` or `ask` falls through to `deny`. Any `agent_type` not in the `RULES` dict passes through untouched — the hook never affects the main thread or agents outside this list.
 
@@ -103,7 +124,7 @@ This is the pattern to reuse if another agent needs a Bash restriction in the fu
 
 Given that limitation, the technical enforcement added is unconditional: `infra-agent-bash-guard.py` now also intercepts `Edit` (via a second `PreToolUse` matcher in `settings.json`), and returns `"ask"` for every `Edit` call made by `agent_type == "debugger"`, regardless of AUTH. This does not break `apply-fix` mode — the user just confirms, as expected — but it closes the gap where a `diagnose-only` delegation could otherwise edit production code with nothing but a prompt-level promise standing in the way. It is a floor (always confirm), not a precise gate (confirm only when unauthorized); the AUTH text in the delegation prompt is still what tells the human confirming whether the edit was actually authorized.
 
-Coverage after this change: SDD agents, `code-reviewer`, `judge-a`, `judge-b`, `aws`, `log-reader`, `codegraph-maintainer`, and `engram-maintainer` are Bash-gated as above; `debugger` is Edit-gated as described here. Bash behavior for `debugger` is unchanged (still full framework/native permissions, no hook rule).
+Coverage after this change: SDD agents, `code-reviewer`, `judge-a`, `judge-b`, `aws`, `log-reader`, `codegraph-maintainer`, `engram-maintainer`, `echor-onboarder`, `echor-updater`, and `echor-validator` are Bash-gated as above; `debugger` is Edit-gated as described here. Bash behavior for `debugger` is unchanged (still full framework/native permissions, no hook rule).
 
 In OpenCode, the mirrored change is `permission.edit` for the `debugger` agent in `opencode.json`, flipped from `"allow"` to `"ask"` — same reasoning, same limitation (OpenCode's permission engine also can't see per-delegation AUTH text, only the static per-agent config).
 
