@@ -31,6 +31,7 @@ If context is missing but a safe assumption exists, state it and continue.
 - `repo` path/url resolves.
 - `openspec_id` exists under `~/dev/specter/openspec` — path existence check only, never read spec content.
 - Declared `components` versus directories actually present.
+- Every project directory has `decisions.md`, and its `index.md` links `[[decisions]]`.
 - Orphan repos under `~/dev` with no vault entry.
 - Stale entries where `last_indexed_commit` differs from the repo's current HEAD.
 

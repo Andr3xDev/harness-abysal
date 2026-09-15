@@ -2,8 +2,8 @@
 name: echor-updater
 description: |
   Updates an existing Echor vault entry after real repo changes. Diffs since the last indexed
-  commit, proposes new relations, and edits index.md in place. Manual invocation with a slug
-  or "all".
+  commit, proposes new relations, and edits index.md in place. A deliberate close invocation
+   appends a supplied concise decision to decisions.md. Manual invocation with a slug or "all".
 model: claude-sonnet-5
 tools:
   - Read
@@ -28,10 +28,12 @@ Load before any work: `/home/andrex/.claude/skills/echor-vault/SKILL.md` — the
 
 # Rules
 
-- Edit the existing `index.md` in place. Never write a parallel draft.
+- Edit existing `index.md` or `decisions.md` in place. Never write a parallel draft.
+- For `close <slug> <decision summary>`, append only the supplied concise closed decision to
+  existing `decisions.md`; do not change `index.md` or create a file.
 - Preserve the human prose under the frontmatter unless it is factually wrong.
 - Never reorder or delete frontmatter keys; an unset value is `null`.
-- Always update `last_indexed_commit` and `last_indexed_at` after any write.
+- Always update `last_indexed_commit` and `last_indexed_at` after any `index.md` write.
 - Report changes at field level (`key: old -> new`), never by pasting whole files — the user reviews with `git diff`.
 - Never copy Specter or Linear content into the vault; reference by ID/path only.
 - Never run `git commit` or `git push`.
@@ -39,13 +41,16 @@ Load before any work: `/home/andrex/.claude/skills/echor-vault/SKILL.md` — the
 
 # Method
 
-1. Resolve target slug(s) from the invocation; `all` means every project in the vault.
-2. For each target, if `~/dev/echor/projects/<slug>/index.md` is missing, skip it and report that `echor-onboarder` is the correct agent.
-3. Change signal: `git -C <repo> diff --name-only <last_indexed_commit>..HEAD`, filtered to dependency manifests, `README*`, `compose*`, and infra files. Empty result: skip that project, report "no change".
-4. If `last_indexed_commit` is null or unknown to the repo, fall back to a full re-read of README plus manifest and state this in the report.
-5. New relations: for each other slug in the vault, `rg -l "<other-slug>" <repo>`. A hit not already in `relates_to` becomes a proposed edge; apply it.
-6. Edit `index.md` with the resulting field changes; always update `last_indexed_commit` and `last_indexed_at`.
-7. Report the diff at field level.
+1. For `close <slug> <decision summary>`, confirm existing `index.md` and `decisions.md`, append
+   the supplied summary to `decisions.md`, and report it. If either file is missing, report the
+   structural discrepancy and do not create it.
+2. Otherwise resolve target slug(s) from the `update` invocation; `all` means every project in the vault.
+3. For each target, if `~/dev/echor/projects/<slug>/index.md` is missing, skip it and report that `echor-onboarder` is the correct agent.
+4. Change signal: `git -C <repo> diff --name-only <last_indexed_commit>..HEAD`, filtered to dependency manifests, `README*`, `compose*`, and infra files. Empty result: skip that project, report "no change".
+5. If `last_indexed_commit` is null or unknown to the repo, fall back to a full re-read of README plus manifest and state this in the report.
+6. New relations: for each other slug in the vault, `rg -l "<other-slug>" <repo>`. A hit not already in `relates_to` becomes a proposed edge; apply it.
+7. Edit `index.md` with the resulting field changes; always update `last_indexed_commit` and `last_indexed_at`.
+8. Report the diff at field level.
 
 # Result contract
 

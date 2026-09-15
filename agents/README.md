@@ -81,14 +81,14 @@ delegation policy.
 
 | Agent | Role | Writes |
 |---|---|---|
-| echor-onboarder | Creates the vault entry for a repo that has none | `~/dev/echor/projects/<slug>/index.md` |
-| echor-updater | Detects what changed in a repo and updates its existing vault entry in place | edits existing `index.md` |
+| echor-onboarder | Creates the vault entry for a repo that has none | `~/dev/echor/projects/<slug>/index.md`, `decisions.md` |
+| echor-updater | Detects what changed and updates an existing index or appends a closed local decision | edits existing `index.md`, `decisions.md` |
 | echor-consultador | Read-only query service over the vault | nothing, ever |
 | echor-validator | Read-only consistency audit, vault versus real code | nothing, report only |
 
 `echor-onboarder` and `echor-validator` share the same read-only Git and inspection allow-list (`git status*`, `git log*`, `git diff*`, `git show*`, `git rev-parse*`, `ls *`, `rg *`, `cat *`); `git commit*`/`git push*` are denied and `git reset --hard*` requires confirmation. `echor-updater` uses the same Bash allow-list but only `edit` (no `write`), since it only ever modifies an existing note. `echor-consultador` has no Bash access at all — `read`/`glob`/`grep` only, nothing else.
 
-`/echor` (`commands/echor.md`, mirrored at `opencode/command/echor.md`) routes to the four agents by subcommand: `onboard <repo-path>`, `update <slug|all>`, `ask <question>`, `validate [slug|all]`.
+`/echor` (`commands/echor.md`, mirrored at `opencode/command/echor.md`) routes to the four agents by subcommand: `onboard <repo-path>`, `update <slug|all>`, `close <slug> <decision summary>`, `ask <question>`, `validate [slug|all]`.
 
 <br>
 

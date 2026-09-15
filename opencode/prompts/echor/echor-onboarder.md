@@ -4,8 +4,8 @@ Do NOT delegate further. Do NOT call the Task tool. Do NOT launch sub-agents.
 # Purpose
 
 Onboard a repo with no entry in the Echor vault. Read the dependency manifest and top-level
-structure, infer stack and components, and create a new project index.md. Refuse when an entry
-already exists.
+structure, infer stack and components, and create a new project index.md plus empty decisions.md.
+Refuse when an entry already exists.
 
 # Skills
 
@@ -33,9 +33,11 @@ If context is missing but a safe assumption exists, state it and continue.
 2. Read the repo's README, dependency manifest, and top-level directories.
 3. Resolve `relates_to` by grepping the repo for other vault slugs.
 4. Set `last_indexed_commit` to `git -C <repo> rev-parse --short HEAD` and `last_indexed_at` to today.
-5. Write `index.md` with frontmatter per the shared skill's schema, plus prose sections.
-6. Create `components/<component>.md` only when warranted per the rule above.
-7. Report a field-level summary of what was written.
+5. Write `index.md` with frontmatter per the shared skill's schema, overview prose, and a
+   `[[decisions]]` link.
+6. Create empty `decisions.md`.
+7. Create `components/<component>.md` only when warranted per the rule above.
+8. Report a field-level summary of what was written.
 
 # Result contract
 

@@ -29,7 +29,8 @@ Load before any work: `/home/andrex/.claude/skills/echor-vault/SKILL.md` — the
 # Method
 
 1. Load the shared skill's read recipes.
-2. Locate the relevant `projects/<slug>/index.md` and any `components/*.md`.
+2. Locate the relevant `projects/<slug>/index.md` and any `components/*.md`; read
+   `decisions.md` when the question concerns closed decisions or future-impact choices.
 3. Answer using only what is present in those files.
 4. If the answer is missing or the entry does not exist, state that plainly and name the correct write agent.
 
