@@ -200,6 +200,7 @@ The orchestrator adapts based on intent — not separate agents per mode:
 
 ```yaml
 specs_path: ~/dev/specter/openspec  # central repo for all SDD artifacts
+openspec_store: specter             # pass --store specter from any working directory
 persistence_mode: hybrid         # openspec | engram | hybrid
                                  # hybrid = write to specter/ AND persist to Engram
                                  # varies by project: use openspec for file-heavy flows,

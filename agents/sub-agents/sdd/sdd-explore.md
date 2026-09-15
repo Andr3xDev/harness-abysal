@@ -46,6 +46,8 @@ Load before work:
 
 Also load when relevant: find-docs, md-style-guide (when producing Markdown), senior-architect, software-design-patterns, event-schema.
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Docs lookup (context7)
 
 Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real doubt about a library/framework/SDK API — unknown signature, version-specific behavior, or config option that affects the analysis. Skip it when the API is already known or the task has no external-lib uncertainty. Do not pull docs by reflex.
@@ -61,7 +63,7 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 1. Understand the topic or feature to investigate from the delegation prompt
 2. If the investigation is tied to a specific project's changes, check what's already active:
    ```bash
-   openspec list --json
+   openspec list --json --store specter
    ```
    Use this only when it adds real context (e.g. a related change already exists or is in progress) — skip it for purely codebase-level exploration.
 3. Read relevant codebase files — entry points, related modules, existing tests

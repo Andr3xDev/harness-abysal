@@ -40,6 +40,8 @@ Load before work:
 
 Also load when relevant: senior-architect, event-schema.
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Commandments (inviolable)
 
 - Never make architecture decisions without documenting alternatives and tradeoffs
@@ -58,12 +60,12 @@ Normalize both into a single kebab-case change name: `{project}-{change-name}` â
 2. Read relevant codebase context from the delegation prompt
 3. Resolve the change name (see above), then create the change scaffold via the `openspec` CLI:
    ```bash
-   openspec new change "<project>-<change-name>"
+   openspec new change "<project>-<change-name>" --store specter
    ```
    If the CLI reports the change already exists, continue with the existing change instead of failing.
 4. Get the resolved output path for this artifact:
    ```bash
-   openspec instructions proposal --change "<project>-<change-name>" --json
+   openspec instructions proposal --change "<project>-<change-name>" --json --store specter
    ```
    Parse `resolvedOutputPath` from the JSON response â€” this is where the proposal must be written, not an assumed path.
 5. Create the proposal content with:
@@ -73,11 +75,11 @@ Normalize both into a single kebab-case change name: `{project}-{change-name}` â
    - **Affected areas**: repos, services, modules impacted
    - **Risks**: what could go wrong, rollback considerations
    - **Open questions**: anything that needs human decision before proceeding
-6. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
+6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
 
 # File output (mandatory)
 
-Write the proposal content to the `resolvedOutputPath` returned by `openspec instructions proposal --change "<name>" --json` (see Instructions step 4). Do not hardcode or assume the path.
+Write the proposal content to the `resolvedOutputPath` returned by `openspec instructions proposal --change "<name>" --json --store specter` (see Instructions step 4). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 

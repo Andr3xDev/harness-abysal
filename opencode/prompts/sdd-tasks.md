@@ -39,17 +39,17 @@ Load before work:
 
 # OpenSpec CLI
 
-Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
 `{project}` comes from the delegation CONTEXT — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
 Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens only, no dots) — created by sdd-propose.
 
-1. Get output path and constraints: `openspec instructions tasks --change "{project}-{change-name}" --json`
+1. Get output path and constraints: `openspec instructions tasks --change "{project}-{change-name}" --json --store specter`
    Parse `resolvedOutputPath`, `template`, `rules`, `context`, `dependencies` from the JSON. `context` and `rules` are constraints for you — never copy them into the file. Read `dependencies` (e.g. spec, design) for context before writing.
-2. After writing, run `openspec status --change "{project}-{change-name}" --json` and `openspec validate "{project}-{change-name}" --json`.
+2. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter`.
 
 # File output (mandatory)
 
-Write to the `resolvedOutputPath` returned by `openspec instructions tasks --change "{project}-{change-name}" --json`. Do not invent or hardcode the path — use `template` as the structure.
+Write to the `resolvedOutputPath` returned by `openspec instructions tasks --change "{project}-{change-name}" --json --store specter`. Do not invent or hardcode the path — use `template` as the structure.
 
 # Engram save
 

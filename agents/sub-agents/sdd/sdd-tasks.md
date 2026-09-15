@@ -38,6 +38,8 @@ Load before work:
 - SDD protocol
 - md-style-guide
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Commandments (inviolable)
 
 - Each task must be specific enough to implement without further clarification
@@ -54,7 +56,7 @@ Load before work:
 1. Read spec AND design from Engram (both required — do not proceed without them)
 2. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
-   openspec instructions tasks --change "<project>-<change-name>" --json
+   openspec instructions tasks --change "<project>-<change-name>" --json --store specter
    ```
    Parse `resolvedOutputPath` from the JSON response — write tasks.md there, not to an assumed path.
 3. Create tasks.md with:
@@ -68,11 +70,11 @@ Load before work:
    - If > 400 lines: recommend splitting into work units
    - Include: `PR size risk: Low | Medium | High`
    - If High: suggest how to split into reviewable chunks
-5. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
+5. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
 
 # File output (mandatory)
 
-Write the tasks content to the `resolvedOutputPath` returned by `openspec instructions tasks --change "<name>" --json` (see Instructions step 2). Do not hardcode or assume the path.
+Write the tasks content to the `resolvedOutputPath` returned by `openspec instructions tasks --change "<name>" --json --store specter` (see Instructions step 2). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 

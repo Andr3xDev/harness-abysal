@@ -37,54 +37,36 @@ GIT_ALLOW = [
 
 SHELL_METACHARACTERS = ["&&", ";", "|", "$(", "`", "\n", ">", "<"]
 
-# sdd-* agents run their openspec validate flow from the specter openspec
-# repo. Scope is deliberately narrow: only cd/env --chdir into this exact
-# path (or subpaths via a trailing "/*"), never arbitrary directories.
-# `cd X && openspec Y` is unreachable anyway since "&&" is a blocked shell
-# metacharacter -- env --chdir is the only combined-command path.
-OPENSPEC_DIR = "/home/andrex/dev/specter/openspec"
-OPENSPEC_DIR_TILDE = "~/dev/specter/openspec"
-OPENSPEC_CD_ALLOW = [
-    f"cd {OPENSPEC_DIR}",
-    f"cd {OPENSPEC_DIR}/*",
-    f"cd {OPENSPEC_DIR_TILDE}",
-    f"cd {OPENSPEC_DIR_TILDE}/*",
-    f"env --chdir={OPENSPEC_DIR} openspec *",
-    f"env --chdir={OPENSPEC_DIR}/* openspec *",
-    f"env --chdir={OPENSPEC_DIR_TILDE} openspec *",
-    f"env --chdir={OPENSPEC_DIR_TILDE}/* openspec *",
-]
-
 RULES = {
     "sdd-explore": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec context*", "openspec doctor*", "openspec list*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec context*", "openspec doctor*", "openspec list*", "openspec store list*"] + GIT_ALLOW,
     },
     "sdd-propose": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*", "openspec store list*"] + GIT_ALLOW,
     },
     "sdd-spec": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*", "openspec store list*"] + GIT_ALLOW,
     },
     "sdd-design": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*", "openspec store list*"] + GIT_ALLOW,
     },
     "sdd-tasks": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec status*", "openspec validate*", "openspec show*", "openspec new*", "openspec instructions*", "openspec store list*"] + GIT_ALLOW,
     },
     "sdd-archive": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": ["openspec status*", "openspec validate*", "openspec archive*", "openspec show*", "openspec instructions*"] + OPENSPEC_CD_ALLOW + GIT_ALLOW,
+        "allow": ["openspec status*", "openspec validate*", "openspec archive*", "openspec show*", "openspec instructions*", "openspec store list*"] + GIT_ALLOW,
     },
     "aws": {
         "deny": GIT_DENY,
@@ -201,7 +183,7 @@ RULES = {
 RULES["sdd-verify"] = {
     "deny": GIT_DENY,
     "ask": GIT_ASK,
-    "allow": RULES["code-reviewer"]["allow"] + ["openspec status*", "openspec validate*"],
+    "allow": RULES["code-reviewer"]["allow"] + ["openspec status*", "openspec validate*", "openspec store list*"],
 }
 RULES["judge-a"] = RULES["code-reviewer"]
 RULES["judge-b"] = RULES["code-reviewer"]
@@ -311,8 +293,15 @@ def _selftest() -> int:
         ("code-reviewer", "npm test", "allow"),
         ("judge-a", "pytest", "allow"),
         ("sdd-explore", "openspec list --json", "allow"),
+        ("sdd-explore", "openspec store list", "allow"),
+        ("sdd-explore", "cd /home/andrex/dev/specter/openspec", "deny"),
+        ("sdd-propose", "openspec new change demo-change --store specter", "allow"),
+        ("sdd-spec", "openspec instructions spec --change demo-change --json --store specter", "allow"),
+        ("sdd-design", "openspec status --change demo-change --json --store specter", "allow"),
+        ("sdd-tasks", "openspec validate demo-change --json --store specter", "allow"),
         ("sdd-propose", "npm test", "deny"),
-        ("sdd-verify", "openspec validate change --json", "allow"),
+        ("sdd-verify", "openspec validate change --json --store specter", "allow"),
+        ("sdd-archive", "openspec archive demo-change -y --store specter", "allow"),
         ("code-reviewer", "npm test && git push origin main", "deny"),
         ("echor-onboarder", "git rev-parse --short HEAD", "allow"),
         ("echor-onboarder", "rg -l lucyna /home/andrex/dev/some-repo", "allow"),

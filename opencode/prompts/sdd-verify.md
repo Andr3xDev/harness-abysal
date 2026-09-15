@@ -41,10 +41,10 @@ Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 
 # OpenSpec CLI (external gate)
 
-Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
 Before the manual verification steps, run these as a real external gate — paste the actual command output into the report, do not summarize or invent it:
-- `openspec status --change "{project}-{change-name}" --json`
-- `openspec validate "{project}-{change-name}" --json`
+- `openspec status --change "{project}-{change-name}" --json --store specter`
+- `openspec validate "{project}-{change-name}" --json --store specter`
 
 If either command reports missing/incomplete artifacts or validation errors, treat that as a CRITICAL finding regardless of what the manual spec-scenario check shows.
 

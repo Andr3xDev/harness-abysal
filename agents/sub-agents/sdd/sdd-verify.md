@@ -39,6 +39,8 @@ Load before work:
 
 Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Commandments (inviolable)
 
 - Never modify code — you verify, you don't fix
@@ -51,8 +53,8 @@ Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 2. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
 3. Run the external CLI gate and include the raw output in the report — this is a real external check, not a self-reported one:
    ```bash
-   openspec status --change "<project>-<change-name>" --json
-   openspec validate "<project>-<change-name>" --json
+   openspec status --change "<project>-<change-name>" --json --store specter
+   openspec validate "<project>-<change-name>" --json --store specter
    ```
 4. Read the implementation files referenced in apply-progress
 5. Run the test suite — report results exactly as they are

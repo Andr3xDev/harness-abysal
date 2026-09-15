@@ -14,6 +14,12 @@ After deploying this harness's configuration, the installer shallow-clones curre
 official installer for Claude Code and OpenCode. It requires `git` and `node`,
 modifies user-level configuration, and removes the temporary clone on exit.
 
+After copying harness configuration, interactive installs ask whether to register
+`/home/andrex/dev/specter` as OpenSpec store `specter`. Registration runs only on
+an explicit `yes`; non-interactive installs skip it. If selected, it requires
+`openspec` and that store root. It fails if either is unavailable, or if `specter`
+points to another root.
+
 Installer preserves replaced targets in timestamped `<target>.backups/` directories. Remove
 only installer backup directories without installing:
 

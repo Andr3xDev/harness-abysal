@@ -38,6 +38,8 @@ Load before work:
 - SDD protocol
 - md-style-guide
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Commandments (inviolable)
 
 - Never archive without a passing verification report
@@ -51,11 +53,11 @@ Load before work:
 3. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
 4. Archive the change via the `openspec` CLI:
    ```bash
-   openspec archive "<project>-<change-name>" -y
+   openspec archive "<project>-<change-name>" -y --store specter
    ```
 
    If the CLI archive command isn't available or fails, fall back to the manual pattern used by the reference `openspec-archive-change` skill:
-   a. `openspec status --change "<name>" --json` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
+   a. `openspec status --change "<name>" --json --store specter` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
    b. Read `tasks.md` and count incomplete (`- [ ]`) vs complete (`- [x]`) tasks — flag and continue if incomplete tasks remain
    c. `mkdir -p "<planningHome.changesDir>/archive"`
    d. `mv "<changeRoot>" "<planningHome.changesDir>/archive/<name>"` (no date prefix — matches the repo's actual archive convention; the primary `openspec archive` command above may add its own date prefix, but this manual fallback intentionally omits one to stay consistent with existing archived changes)

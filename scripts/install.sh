@@ -83,6 +83,44 @@ install_file() {
   cp "$source" "$target"
 }
 
+register_specter_store() {
+  local stores status
+  local store_root="/home/andrex/dev/specter"
+
+  command -v openspec >/dev/null 2>&1 || {
+    echo "error: openspec is required to register store 'specter'" >&2
+    exit 1
+  }
+  [ -d "$store_root" ] || {
+    echo "error: OpenSpec store root does not exist: $store_root" >&2
+    exit 1
+  }
+  stores="$(openspec store list --json)" || {
+    echo "error: could not inspect registered OpenSpec stores" >&2
+    exit 1
+  }
+
+  if printf '%s' "$stores" | node -e '
+    const stores = JSON.parse(require("fs").readFileSync(0, "utf8")).stores || [];
+    const store = stores.find(({ id }) => id === "specter");
+    process.exit(store ? (store.root === process.argv[1] ? 0 : 2) : 1);
+  ' "$store_root"; then
+    return
+  else
+    status=$?
+  fi
+  if [ "$status" -eq 1 ]; then
+    openspec store register "$store_root" --id specter --yes
+    return
+  fi
+  if [ "$status" -eq 2 ]; then
+    echo "error: OpenSpec store 'specter' is registered to a different root" >&2
+  else
+    echo "error: could not parse registered OpenSpec stores" >&2
+  fi
+  exit 1
+}
+
 backup "$HOME/.claude/agents"
 backup "$HOME/.claude/commands"
 backup "$HOME/.claude/skills"
@@ -126,6 +164,13 @@ tar \
   --exclude='./cache' \
   --exclude='./logs' \
   -C "$ROOT/opencode" -cf - . | tar -C "$HOME/.config/opencode" -xf -
+
+if [ -t 0 ]; then
+  read -r -p "Register OpenSpec store 'specter' from /home/andrex/dev/specter? [y/N] " register_store
+  case "$register_store" in
+    [Yy]|[Yy][Ee][Ss]) register_specter_store ;;
+  esac
+fi
 
 caveman_dir="$(mktemp -d)"
 trap 'rm -rf -- "$caveman_dir"' EXIT

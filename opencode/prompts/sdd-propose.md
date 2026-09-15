@@ -37,18 +37,18 @@ Also load when relevant: senior-architect, event-schema.
 
 # OpenSpec CLI
 
-Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
 `{project}` comes from the delegation CONTEXT (repo/service name) — if not given, infer from `mem_current_project` or ask the orchestrator via `status: blocked`.
 
 1. Normalize the change name to `{project}-{change-name}` — kebab-case, hyphens only, no dots.
-2. Create the change: `openspec new change "{project}-{change-name}"`
-3. Get output path and constraints: `openspec instructions proposal --change "{project}-{change-name}" --json`
+2. Create the change: `openspec new change "{project}-{change-name}" --store specter`
+3. Get output path and constraints: `openspec instructions proposal --change "{project}-{change-name}" --json --store specter`
    Parse `resolvedOutputPath`, `template`, `rules`, `context` from the JSON. `context` and `rules` are constraints for you — never copy them into the file.
-4. After writing, run `openspec status --change "{project}-{change-name}" --json` and `openspec validate "{project}-{change-name}" --json`.
+4. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter`.
 
 # File output (mandatory)
 
-Write to the `resolvedOutputPath` returned by `openspec instructions proposal --change "{project}-{change-name}" --json`. Do not invent or hardcode the path — use `template` as the structure.
+Write to the `resolvedOutputPath` returned by `openspec instructions proposal --change "{project}-{change-name}" --json --store specter`. Do not invent or hardcode the path — use `template` as the structure.
 
 # Engram save
 

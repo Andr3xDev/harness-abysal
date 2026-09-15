@@ -46,6 +46,8 @@ Load before work:
 
 Also load when relevant: find-docs, senior-architect, software-design-patterns, event-schema.
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Docs lookup (context7)
 
 Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real doubt about a library/framework/SDK API — unknown signature, version-specific behavior, or config option that affects a design decision. Skip it when the API is already known. Do not pull docs by reflex.
@@ -68,7 +70,7 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 2. Read relevant codebase to understand current patterns and conventions
 3. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
-   openspec instructions design --change "<project>-<change-name>" --json
+   openspec instructions design --change "<project>-<change-name>" --json --store specter
    ```
    Parse `resolvedOutputPath` from the JSON response — write design.md there, not to an assumed path.
 4. Create design.md with:
@@ -79,11 +81,11 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
    - **Sequence diagram**: for multi-service or complex flows (mermaid or text)
    - **Conventions**: which existing patterns to follow, reference files
    - **Dependencies**: external libs, services, APIs needed
-5. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
+5. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
 
 # File output (mandatory)
 
-Write the design content to the `resolvedOutputPath` returned by `openspec instructions design --change "<name>" --json` (see Instructions step 3). Do not hardcode or assume the path.
+Write the design content to the `resolvedOutputPath` returned by `openspec instructions design --change "<name>" --json --store specter` (see Instructions step 3). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 

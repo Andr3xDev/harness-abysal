@@ -17,18 +17,20 @@ It is a mirror of `/home/andrex/.config/opencode/prompts/` (OpenCode). Both mirr
 `sdd-archive` (`/home/andrex/.claude/agents/sub-agents/sdd/sdd-archive.md`) closes a change using the real `openspec` CLI instead of moving folders by hand:
 
 ```bash
-openspec archive "<project>-<change-name>" -y
+openspec archive "<project>-<change-name>" -y --store specter
 ```
 
 Before archiving, the agent requires a passing verification report from Engram and refuses to proceed if it's missing or has CRITICAL findings.
 
 If the CLI archive command is unavailable or fails, the agent falls back to the manual pattern from the reference `openspec-archive-change` skill, documented directly in the file:
 
-- `openspec status --change "<name>" --json` to read `changeRoot` / `planningHome.changesDir` and check artifact completion
+- `openspec status --change "<name>" --json --store specter` to read `changeRoot` / `planningHome.changesDir` and check artifact completion
 - Read `tasks.md` and flag (not block) incomplete tasks
 - `mkdir -p "<changesDir>/archive"` then `mv "<changeRoot>" "<changesDir>/archive/YYYY-MM-DD-<name>"`
 
 Change-name convention (`{project}-{change-name}`, kebab-case, hyphens only) is defined once at `/home/andrex/dev/specter/openspec/AGENTS.md` and validated by `sdd-propose` before a change is created — this README does not duplicate that rule.
+
+SDD commands use registered store `specter` from any working directory: `openspec <subcommand> ... --store specter`. Check registration with `openspec store list`; global structural validation is `openspec validate --all --strict --store specter`.
 
 <br>
 
@@ -106,10 +108,10 @@ In OpenCode, permissions are granular per command via `opencode.json` (`allow`/`
 | engram-maintainer | `engram context/search/stats/projects list/doctor/timeline` | `engram delete *`, `engram export *` | all unrelated shell commands |
 | code-reviewer | `npm test*`/`npm run test*`/`npm run lint*`, `yarn test*`/`lint*`, `pnpm test*`/`lint*`, `pytest*`, `python -m pytest*`, `go test*`/`vet*`, `cargo test*`/`clippy*`, `ruff*`, `eslint*`, `flake8*`, `mypy*`, `rubocop*`, `bundle exec rspec*`, `mvn test*`, `gradle test*`, `make test*`, `tox*`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
 | judge-a, judge-b | Same test/lint and read-only Git commands as `code-reviewer` | `git reset --hard*` | `git commit*`, `git push*` |
-| sdd-explore | `openspec context`/`doctor`/`list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
-| sdd-propose, sdd-spec, sdd-design, sdd-tasks | Documented `openspec` proposal/spec/design/task commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
-| sdd-verify | Documented `openspec` validation plus the reviewer test/lint and read-only Git commands | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
-| sdd-archive | Documented `openspec` archive commands, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-explore | `openspec context`/`doctor`/`list` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-propose, sdd-spec, sdd-design, sdd-tasks | `openspec status`/`validate`/`show`/`new`/`instructions` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-verify | `openspec status`/`validate` with `--store specter`, `openspec store list`, reviewer test/lint, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-archive | `openspec status`/`validate`/`show`/`instructions`/`archive` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | echor-onboarder, echor-validator | Read-only Git (`status`/`log`/`diff`/`show`/`rev-parse`), `ls *`, `rg *`, `cat *` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | echor-updater | Same read-only Git and inspection commands as `echor-onboarder` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | echor-consultador | none | none | all shell commands |

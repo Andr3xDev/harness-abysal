@@ -37,12 +37,12 @@ Load before work:
 
 # OpenSpec CLI
 
-Use `/home/andrex/dev/specter` as OpenSpec root. Run commands from that directory.
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
 
-1. `openspec status --change "{project}-{change-name}" --json` — check artifact completion (`artifacts[].status == "done"`) and read `changeRoot`, `planningHome`.
-2. `openspec validate "{project}-{change-name}" --json` — confirm no validation errors before archiving.
+1. `openspec status --change "{project}-{change-name}" --json --store specter` — check artifact completion (`artifacts[].status == "done"`) and read `changeRoot`, `planningHome`.
+2. `openspec validate "{project}-{change-name}" --json --store specter` — confirm no validation errors before archiving.
 3. If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator, do not archive.
-4. Archive: `openspec archive "{project}-{change-name}" -y`
+4. Archive: `openspec archive "{project}-{change-name}" -y --store specter`
    This handles the move to the archive location resolved by `planningHome`. Do not manually `mv` the change folder.
 
 # Engram save

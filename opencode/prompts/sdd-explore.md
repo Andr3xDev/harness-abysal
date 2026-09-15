@@ -35,13 +35,12 @@ Use Context7 MCP ONLY when there is a real doubt about a library/framework/SDK A
 5. Identify risks, unknowns, and points of failure
 6. Return structured analysis with recommendation
 
-# OpenSpec root
+# OpenSpec store
 
-Use `/home/andrex/dev/specter` as OpenSpec root when SDD artifacts are involved.
-Use CLI from that directory for checks:
-- `openspec context`
-- `openspec doctor`
-- Optionally, `openspec list --json` to see existing changes when relevant to the exploration — not required if it adds no value
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+- `openspec context --store specter`
+- `openspec doctor --store specter`
+- Optionally, `openspec list --json --store specter` to see existing changes when relevant to the exploration — not required if it adds no value
 
 # Engram save
 

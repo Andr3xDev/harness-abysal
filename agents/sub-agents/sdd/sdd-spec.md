@@ -40,6 +40,8 @@ Load before work:
 
 Also load when relevant: event-schema.
 
+Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
+
 # Commandments (inviolable)
 
 - Never assume requirements — if ambiguous, flag as open question
@@ -56,7 +58,7 @@ Also load when relevant: event-schema.
 1. Read the proposal from Engram (required — do not proceed without it)
 2. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
-   openspec instructions spec --change "<project>-<change-name>" --json
+   openspec instructions spec --change "<project>-<change-name>" --json --store specter
    ```
    Parse `resolvedOutputPath` from the JSON response — the CLI resolves the real spec path (e.g. `specs/{capability}/spec.md`), do not hardcode it yourself.
 3. Write delta specs using GIVEN/WHEN/THEN format:
@@ -70,11 +72,11 @@ THEN  [observable, verifiable result]
 4. Cover: happy path, error cases, edge cases, boundary conditions
 5. If the feature emits domain events: specify the event schema in the spec
 6. Each spec should map 1:1 to a testable behavior
-7. After writing, run `openspec status --change "<project>-<change-name>" --json` and `openspec validate "<project>-<change-name>" --json`.
+7. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
 
 # File output (mandatory)
 
-Write the spec content to the `resolvedOutputPath` returned by `openspec instructions spec --change "<name>" --json` (see Instructions step 2). Do not hardcode or assume the path.
+Write the spec content to the `resolvedOutputPath` returned by `openspec instructions spec --change "<name>" --json --store specter` (see Instructions step 2). Do not hardcode or assume the path.
 
 # Engram save (mandatory)
 
