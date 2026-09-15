@@ -52,31 +52,7 @@ tools:
   - mcp__github__search_code
   - mcp__github__search_repositories
   # Linear
-  - mcp__linear-server__list_issues
-  - mcp__linear-server__get_issue
-  - mcp__linear-server__save_issue
-  - mcp__linear-server__list_projects
-  - mcp__linear-server__get_project
-  - mcp__linear-server__list_teams
-  - mcp__linear-server__get_team
-  - mcp__linear-server__list_users
-  - mcp__linear-server__get_user
-  - mcp__linear-server__list_issue_statuses
-  - mcp__linear-server__get_issue_status
-  - mcp__linear-server__list_issue_labels
-  - mcp__linear-server__list_project_labels
-  - mcp__linear-server__save_comment
-  - mcp__linear-server__list_comments
-  - mcp__linear-server__search_documentation
-  - mcp__linear-server__list_cycles
-  - mcp__linear-server__list_milestones
-  - mcp__linear-server__get_milestone
-  - mcp__linear-server__get_status_updates
-  - mcp__linear-server__save_status_update
-  - mcp__linear-server__list_documents
-  - mcp__linear-server__get_document
-  - mcp__linear-server__list_initiatives
-  - mcp__linear-server__get_initiative
+  - mcp__linear-server__*
 disallowedTools:
   - Write
   - Edit
