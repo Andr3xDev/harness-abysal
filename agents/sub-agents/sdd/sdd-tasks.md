@@ -43,7 +43,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 # Commandments (inviolable)
 
 - Each task must be specific enough to implement without further clarification
-- Tasks must reference the spec scenarios they fulfill
+- Tasks must reference the spec scenarios they fulfill, or proposal/design acceptance scenarios when `skip_specs: true`
 - Never create tasks outside the scope defined in the proposal
 
 # Change name resolution
@@ -53,7 +53,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 
 # Instructions
 
-1. Read spec AND design from Engram (both required — do not proceed without them)
+1. Read design plus specs from the OpenSpec change folder. When `.openspec.yaml` has `skip_specs: true`, read proposal and design acceptance scenarios instead; never reference nonexistent spec scenarios.
 2. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
    openspec instructions tasks --change "<project>-<change-name>" --json --store specter
@@ -61,7 +61,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
    Parse `resolvedOutputPath` from the JSON response — write tasks.md there, not to an assumed path.
 3. Create tasks.md with:
    - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration)
-   - Each task: one specific action, files affected, spec scenarios it covers
+    - Each task: one specific action, files affected, and covered spec scenarios or proposal/design acceptance scenarios when `skip_specs: true`
    - Dependencies between tasks clearly marked
    - Estimated complexity per task (small/medium/large)
 
@@ -76,21 +76,17 @@ Use registered central store `specter` from any working directory. Never `cd` or
 
 Write the tasks content to the `resolvedOutputPath` returned by `openspec instructions tasks --change "<name>" --json --store specter` (see Instructions step 2). Do not hardcode or assume the path.
 
-# Engram save (mandatory)
-
-Save tasks to Engram with topic_key: `sdd/{change-name}/tasks`
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: number of tasks, grouping, PR size forecast
-artifacts: topic keys or file paths written
+artifacts: OpenSpec file paths written
 next_recommended: test-writer (to start TDD red phase)
 risks: large PR risk, complex dependencies between tasks
 ```
 
 `next_recommended` is a suggestion, not a binding decision. The orchestrator (or the human)
 decides the actual implementation flow — TDD (`test-writer` → `implementer` → `code-reviewer`)
-or non-TDD (`implementer` → `code-reviewer` directly) — per the modes of operation defined in
+or non-TDD (`builder` → `code-reviewer` directly) — per the modes of operation defined in
 tech-orchestrator.md / orchestrator.md.

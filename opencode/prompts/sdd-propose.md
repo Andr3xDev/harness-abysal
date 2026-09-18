@@ -25,7 +25,7 @@ Also load when relevant: senior-architect, event-schema.
 
 # Instructions
 
-1. Read the exploration findings from Engram if they exist
+1. Read the delegation-provided OpenSpec exploration file, if any
 2. Read relevant codebase context from the delegation prompt
 3. Create proposal.md with:
    - **Intent**: what problem this solves and why now
@@ -50,16 +50,12 @@ Use registered central store `specter` from any working directory. Never `cd` or
 
 Write to the `resolvedOutputPath` returned by `openspec instructions proposal --change "{project}-{change-name}" --json --store specter`. Do not invent or hardcode the path — use `template` as the structure.
 
-# Engram save
-
-Save the proposal to Engram with topic_key: `sdd/{change-name}/proposal`. This is a real SDD artifact, not routine memory.
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: one-sentence description of the proposed change
-artifacts: topic keys or file paths written
-next_recommended: sdd-spec or sdd-design (human decides order)
+artifacts: OpenSpec file paths written
+next_recommended: sdd-explore
 risks: open questions or blockers
 ```

@@ -1,8 +1,8 @@
 ---
 name: sdd-propose
 description: |
-  Create a change proposal with intent, scope, and approach. Use when exploration
-  is complete and the idea is ready to be formalized into a proposal document.
+   Create a change proposal with intent, scope, and approach. Use first to create
+   the change directory before sdd-explore persists exploration artifacts.
 model: claude-sonnet-5
 tools:
   - Read
@@ -10,15 +10,6 @@ tools:
   - Grep
   - Glob
   - Bash
-  - mcp__engram__mem_context
-  - mcp__engram__mem_search
-  - mcp__engram__mem_save
-  - mcp__engram__mem_update
-  - mcp__engram__mem_current_project
-  - mcp__engram__mem_get_observation
-  - mcp__engram__mem_save_prompt
-mcpServers:
-  - engram
 color: blue
 ---
 
@@ -56,7 +47,7 @@ Normalize both into a single kebab-case change name: `{project}-{change-name}` â
 
 # Instructions
 
-1. Read the exploration findings from Engram if they exist
+1. Read the delegation-provided OpenSpec exploration file, if any
 2. Read relevant codebase context from the delegation prompt
 3. Resolve the change name (see above), then create the change scaffold via the `openspec` CLI:
    ```bash
@@ -81,16 +72,12 @@ Normalize both into a single kebab-case change name: `{project}-{change-name}` â
 
 Write the proposal content to the `resolvedOutputPath` returned by `openspec instructions proposal --change "<name>" --json --store specter` (see Instructions step 4). Do not hardcode or assume the path.
 
-# Engram save (mandatory)
-
-Save the proposal to Engram with topic_key: `sdd/{change-name}/proposal`
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: one-sentence description of the proposed change
-artifacts: topic keys or file paths written
-next_recommended: sdd-spec or sdd-design (human decides order)
+artifacts: OpenSpec file paths written
+next_recommended: sdd-explore
 risks: open questions or blockers
 ```

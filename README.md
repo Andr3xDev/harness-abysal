@@ -12,7 +12,8 @@ config on any of my machines.
 After deploying this harness's configuration, the installer shallow-clones current
 `main` from the upstream Caveman repository into a temporary directory and runs its
 official installer for Claude Code and OpenCode. It requires `git` and `node`,
-modifies user-level configuration, and removes the temporary clone on exit.
+modifies user-level configuration, removes Cavecrew agents/skill, retains Caveman
+plugin and communication skills, and removes the temporary clone on exit.
 
 After copying harness configuration, interactive installs ask whether to register
 `/home/andrex/dev/specter` as OpenSpec store `specter`. Registration runs only on
@@ -71,8 +72,8 @@ Smoke always uses temporary `HOME`; installed CLI checks print `SKIP` when unava
 tech-orchestrator          strategist
   (decomposes, delegates)    (business/product discussion, no code)
         │                         │
-        ├── sdd-explore     → investigate before proposing        ◄─ strategist may also delegate here
-        ├── sdd-propose     → proposal.md                          ◄─ strategist may also delegate here
+        ├── sdd-propose     → proposal.md; creates change directory ◄─ strategist may also delegate here
+        ├── sdd-explore     → explore.md after proposal             ◄─ strategist may also delegate here
         ├── sdd-spec        → specs/spec.md (GIVEN/WHEN/THEN)      ◄─ strategist may also delegate here
         ├── sdd-design      → design.md (ADR-lite)                 ◄─ strategist may also delegate here
         ├── sdd-tasks       → tasks.md (ordered, PR-size forecast)
@@ -81,7 +82,7 @@ tech-orchestrator          strategist
         ├── implementer     → strict TDD green from existing failing tests
         ├── code-reviewer   → spec/design/test conformance review (can run tests/linters/read-only git to verify claims)
         ├── judge-a/judge-b → blind dual adversarial review (judgment-day)
-        ├── debugger        → root cause + fix (per AUTH)
+        ├── debugger        → root cause + clear bounded fix (default; diagnose-only override)
         ├── codegraph-maintainer → CodeGraph index health
         ├── engram-maintainer → explicit memory review/curation
         └── sdd-verify → sdd-archive → PR description ready
@@ -91,9 +92,21 @@ The orchestrator never writes code directly. Strategist's delegation is scoped t
 `sdd-explore`/`sdd-propose`/`sdd-spec`/`sdd-design` only — never to implementation-phase
 agents (`sdd-tasks`, `builder`, `test-writer`, `implementer`, `code-reviewer`,
 `sdd-verify`, `sdd-archive`). SDD activates only when the user explicitly asks for
-plan/spec/design/SDD/OpenSpec, or a spec/tasks artifact already exists for the change —
+plan/spec/design/SDD/OpenSpec — existing artifacts alone never activate it —
 otherwise implementation goes straight to `builder` or the TDD loop (`test-writer` →
-`implementer` → `code-reviewer`) with no spec required. TDD runs only when tests add signal.
+`implementer` → `code-reviewer`) with no spec required. TDD runs only when behavior value,
+existing coverage, duplication/overlap, and protection of current behavior justify it; low-value,
+duplicate/overlapping, stale, or disproportionate tests are rejected; otherwise
+`builder` uses smallest useful proof. Bug regressions require meaningful externally observable behavior proportionate to risk.
+Never delegate to external Cavecrew agents (`cavecrew-builder`, `cavecrew-investigator`,
+`cavecrew-reviewer`); route only to named harness agents. Cavecrew is external tooling,
+distinct from the Caveman communication skill/plugin.
+
+Full SDD runs `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`.
+`sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`.
+When `.openspec.yaml` has `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
+
+Before any non-trivial delegation or change, orchestrators give a natural, contextual update with relevant detected issue, impact, planned action, affected area, validation, and real risk or blocker. They use no fixed labels or mandatory field list, omit irrelevant detail, avoid vague notices, and keep routine tiny reads/checks silent.
 
 ## Agents (`agents/`)
 
@@ -102,12 +115,12 @@ otherwise implementation goes straight to `builder` or the TDD loop (`test-write
 | `tech-orchestrator` | Claude entry point for multi-step task. Decomposes, delegates, never codes. |
 | `strategist` | Business-language discussion partner — epics/goals, no code. May delegate, but only to `sdd-explore`/`sdd-propose`/`sdd-spec`/`sdd-design`; never to implementation-phase agents. |
 | `sub-agents/sdd/*` | One agent per SDD phase: explore, propose, spec, design, tasks, verify, archive. |
-| `sub-agents/tdd/builder` | Default writer when strict TDD is not useful. |
-| `sub-agents/tdd/test-writer` | Writes failing tests from specs (red phase). |
+| `sub-agents/tdd/builder` | Default writer when TDD value gate does not pass. |
+| `sub-agents/tdd/test-writer` | Writes valuable failing tests from specs (red phase). |
 | `sub-agents/tdd/implementer` | Minimal implementation to turn tests green. |
 | `sub-agents/review/code-reviewer` | Spec/design/test conformance review. Has a scoped `Bash` tool (hook-restricted to running tests/linters and read-only git) to verify test/lint claims — still cannot modify any file. |
 | `sub-agents/review/judge-a`, `judge-b` | Blind parallel adversarial review for critical features. |
-| `sub-agents/debug/debugger` | Root cause analysis; fixes only with explicit AUTH. |
+| `sub-agents/debug/debugger` | Root cause analysis; fixes clear, bounded causes regardless of file count/category, then reports root cause, changes, validation, and residual risk. `AUTH: diagnose-only` never edits. |
 | `sub-agents/infrastructure/aws` | Read-only AWS investigation. |
 | `sub-agents/infrastructure/log-reader` | Read-only large log synthesis. |
 | `sub-agents/infrastructure/codegraph-maintainer` | Checks CodeGraph index status; init/sync/index only when explicit. |

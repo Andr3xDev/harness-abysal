@@ -10,15 +10,6 @@ tools:
   - Grep
   - Glob
   - Bash
-  - mcp__engram__mem_context
-  - mcp__engram__mem_search
-  - mcp__engram__mem_save
-  - mcp__engram__mem_update
-  - mcp__engram__mem_current_project
-  - mcp__engram__mem_get_observation
-  - mcp__engram__mem_save_prompt
-mcpServers:
-  - engram
 color: blue
 ---
 
@@ -55,7 +46,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 
 # Instructions
 
-1. Read the proposal from Engram (required — do not proceed without it)
+1. Read `proposal.md` and `explore.md` from the OpenSpec change folder (required — do not proceed without both)
 2. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
    openspec instructions spec --change "<project>-<change-name>" --json --store specter
@@ -78,16 +69,12 @@ THEN  [observable, verifiable result]
 
 Write the spec content to the `resolvedOutputPath` returned by `openspec instructions spec --change "<name>" --json --store specter` (see Instructions step 2). Do not hardcode or assume the path.
 
-# Engram save (mandatory)
-
-Save specs to Engram with topic_key: `sdd/{change-name}/spec`
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: number of scenarios specified, key behaviors covered
-artifacts: topic keys or file paths written
+artifacts: OpenSpec file paths written
 next_recommended: sdd-design (if not done) or sdd-tasks (if design exists)
 risks: ambiguous requirements, missing edge cases flagged
 ```

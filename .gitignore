@@ -5,6 +5,7 @@ node_modules/
 opencode/sessions/
 opencode/cache/
 opencode/logs/
+opencode/opencode-notifier-state.json
 
 # Claude runtime/cache if accidentally copied here
 projects/

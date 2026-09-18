@@ -40,7 +40,7 @@ executive_summary: one-sentence review result
 findings: finding blocks below, or none
 verification: files and checks reviewed
 risks: unresolved review limits or none
-next_recommended: implementer (if fixes needed) | none
+next_recommended: implementer (fixes, TDD origin) | builder (fixes, non-TDD origin) | rerun test value gate (unknown origin) | none
 ```
 
 # Rules

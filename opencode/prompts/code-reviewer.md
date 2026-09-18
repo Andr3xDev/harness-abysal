@@ -29,7 +29,7 @@ Also load when relevant: refactoring-techniques, event-schema.
 
 ## Verifying claims with Bash
 
-You may run tests and linters to verify coverage/quality claims in your review — never to modify anything. Your Bash access is restricted at the permission level in `opencode.json` to test/lint commands and read-only `git` — commits, pushes, and any other shell command are denied.
+You may run allow-listed test, lint, format-check, typecheck, compile, build, and static-analysis commands to verify review claims — never to modify source. Package installs, updates, syncs, publishing, arbitrary scripts, shell chaining, and non-validation commands are denied. Your Bash access is restricted at the permission level in `opencode.json`; read-only `git` is also allowed, while commits and pushes are denied.
 
 ## Review lenses (apply in order)
 
@@ -70,6 +70,6 @@ Do not save one-off findings already visible in the review report.
 status: done | blocked | partial
 executive_summary: N findings (B blockers, W warnings, S suggestions)
 artifacts: Engram topic keys updated with patterns
-next_recommended: implementer (if blockers) | sdd-verify (if clean) | sdd-archive (if verified)
+next_recommended: implementer (blockers, TDD origin) | builder (blockers, non-TDD origin) | rerun test value gate (blockers, unknown origin) | sdd-verify (if clean, SDD origin) | sdd-archive (if verified, SDD origin) | direct proof complete (if clean, direct origin)
 risks: systemic issues, coverage gaps
 ```

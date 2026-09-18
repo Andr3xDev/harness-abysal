@@ -13,11 +13,13 @@
 Current source of truth is `~/.config/opencode/opencode.json` and prompts under `~/.config/opencode/prompts/`.
 
 - SDD only when user explicitly asks for `plan`, `spec`, `design`, `SDD`, or `OpenSpec`.
-- TDD only when tests add real signal: business logic, branches, validation, permissions, money/security, parsers, transformations, bug regressions, stable service behavior.
+- TDD only when tests add real signal: business logic, branches, validation, permissions, money/security, parsers, transformations, bug regressions, stable service behavior. Before adding a test, assess behavior value, existing coverage, duplication/overlap, and whether it protects current behavior. Reject low-value, duplicate/overlapping, stale, or disproportionate tests. For bug fixes, add a regression test only for meaningful externally observable behavior proportionate to risk; skip trivial/localized fixes when existing coverage or type/lint/build/smoke proof is sufficient.
 - Default writer for normal code/config/docs is `builder`; strict RED/GREEN route is `test-writer` -> `implementer` only when valuable.
 - Use Context7 MCP for library/API docs: `mcp__context7__resolve-library-id` -> `mcp__context7__query-docs`. Do not use `ctx7` CLI.
 - Use CodeGraph before grep/read when repo has `.codegraph/` and task needs code understanding.
 - Persist Engram only for useful decisions, root-cause bug fixes, non-obvious discoveries, workflow/user prefs, reusable patterns, and session summaries.
+- Debugger may fix any clear, bounded root cause, including a localized verifiable environment/infrastructure variable correction; file count and change category alone do not require escalation. Escalate only uncertainty, broad or unpredictable impact, design/product/security trade-offs, migration/irreversible action, or unverified work. Always report root cause, exact files/changes, validation, and residual risk to the orchestrator.
+- Never persist SDD artifacts to Engram; use OpenSpec filesystem artifacts only.
 - Never run `git commit` or `git push`. Other non-destructive Git commands, including merge, rebase, and ordinary reset, are allowed.
 
 This override supersedes older strict SDD/TDD language below.
@@ -29,8 +31,8 @@ Every output — code, spec, design, or review — must respect these:
 - **DRY** — no knowledge duplication
 - **YAGNI** — don't build what's not needed today
 - **Clean Code** — descriptive names, small functions, self-documenting code
-- **SDD** — no implementation without an approved spec
-- **TDD** — tests first, minimal implementation to pass them. Default for testable backend/domain logic; may be relaxed only when the spec or delegation explicitly says so (e.g. frontend UI, services without a test harness)
+- **SDD** — implementation requires approved SDD artifacts; direct no-spec TDD uses delegation acceptance scenarios
+- **TDD** — use only when tests pass the value gate; otherwise `builder` handles implementation with the smallest useful proof
 - **Event-driven** — domain events defined in schema before implementing
 - **Loop engineering** — agents never self-report completion; verifiable criteria only
 
@@ -53,7 +55,7 @@ No file, function, class, test, or configuration may be deleted without explicit
 ### 4. Native confirmation for destructive commands
 Never execute commands that destroy, overwrite, or corrupt data or state:
 - Require runtime native user confirmation before file removal, irreversible database operations, disk wipe/format operations, `git reset --hard`, or equivalent destructive commands
-- No overwriting config files, env files, or infrastructure state
+- Clear, bounded edits to specified config, env, or infrastructure variables are allowed; destructive overwrite or corruption still requires runtime native user confirmation
 - No publishing, deploying, or pushing to remote without explicit instruction
 - When in doubt, show the command first and wait for approval
 
@@ -90,7 +92,7 @@ These apply regardless of language or stack:
 - All names in English — variables, functions, classes, commits, specs
 - Descriptive naming: `calculate_monthly_revenue` not `calc_rev`, `UserRepository` not `UR`
 - One responsibility per function, per class, per module
-- No inline comments — code explains itself through naming and structure
+- Comments are rare: add only for non-obvious why, constraint, risk, workaround, or externally imposed behavior; never narrate code, restate names, or leave stale comments
 - No magic numbers — named constants with clear intent
 - No logic in handlers or controllers — delegate to services, use cases, or domain layer
 - Type annotations when the language supports them
@@ -105,7 +107,7 @@ These apply regardless of language or stack:
 2. If the task involves service relationships or domain structure: query CodeGraph
 
 ### Task close
-1. Persist to Engram: decisions made, bugs found, patterns identified
+1. Persist non-SDD decisions, bugs, patterns, discoveries, preferences, and session summaries to Engram
 2. If new service relationships were discovered: note them for future reference
 
 ### Before context reset (/compact, /clear, or equivalent)
@@ -139,19 +141,25 @@ AUTH        → (optional) write-scope permissions; destructive commands require
 - Subagent without explicit AUTH cannot modify files outside its scope
 - Results return as a summary — the parent never sees intermediate tool calls
 
+### Orchestrator progress reports
+- Before any non-trivial delegation or change, give a natural, contextual progress update that lets the user stay in control. Include only relevant detail: what was detected, why it matters, the exact planned action, affected area, validation, and any real risk or blocker.
+- Do not use fixed labels, templates, or a mandatory field list. Omit irrelevant detail. Never send vague notices such as "found something" or "fixing it" without concrete context. Keep routine tiny reads/checks silent.
+
 ### When to delegate vs work directly
 - **Delegate** when: task can run in isolated context, requires specialized tools, involves heavy file reading that would pollute parent context, or needs an adversarial perspective
 - **Work directly** when: single-file edit, simple grep, sequential operation where context continuity matters
 
 ---
 
-## SDD gate
+## SDD gate (SDD work only)
 
-Before any implementation delegation, verify that the spec exists:
+Full SDD route: `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `.openspec.yaml` has `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
+
+Before SDD implementation delegation, verify required artifacts. Direct no-spec TDD does not require SDD artifacts; delegation acceptance scenarios replace them. When the per-change `.openspec.yaml` has `skip_specs: true`, `specs/` is intentionally absent; `proposal.md`, `design.md`, and `tasks.md` are the source of truth.
 
 ```
 □ {spec_path}/proposal.md
-□ {spec_path}/specs/  (at least one file)
+□ {spec_path}/specs/  (at least one file, unless `.openspec.yaml` has `skip_specs: true`)
 □ {spec_path}/design.md
 □ {spec_path}/tasks.md
 □ If the feature emits events: schema defined
@@ -167,11 +175,11 @@ Agents cannot self-report completion. These are verified externally:
 
 | Agent | Verifiable criteria |
 |-------|-------------------|
-| sdd-* | Required OpenSpec/Engram artifacts exist for the phase |
-| test-writer | Test runner executes and tests fail RED (not by import/syntax errors) |
+| sdd-* | Required OpenSpec artifacts exist for the phase |
+| test-writer | Newly written targeted tests fail RED for intended reason; prior coverage stays green |
 | implementer | Tests GREEN + linter clean + type checker clean |
 | code-reviewer | Report delivered with severity per observation |
-| debugger | Root cause documented + fix proposed or applied per AUTH |
+| debugger | Root cause, exact files/changes, validation, and residual risk reported; clear bounded fix applied by default, or proposed under `AUTH: diagnose-only` |
 | sdd-explore | Structured summary delivered to parent |
 
 ---
@@ -182,10 +190,10 @@ The orchestrator adapts based on intent — not separate agents per mode:
 
 | Trigger | Mode | Agents activated |
 |---------|------|-----------------|
-| "plan X" / "design X" | plan | sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-tasks |
-| "implement X" | implement | test-writer → implementer → code-reviewer (requires spec) |
-| "spec and implement X" | full | sdd-* → test-writer → implementer → code-reviewer |
-| "explore X" / "understand X" | explore | sdd-explore |
+| "plan X" / "design X" | plan | sdd-propose → sdd-explore → sdd-spec → sdd-design → sdd-tasks (omit sdd-spec when `skip_specs: true`) |
+| "implement X" | implement | builder, or test-writer → implementer → code-reviewer when TDD value gate passes (requires SDD artifacts only when SDD is in play; otherwise delegation acceptance scenarios) |
+| "spec and implement X" | full | sdd-* → builder, or test-writer → implementer → code-reviewer when TDD value gate passes |
+| "explore X" / "understand X" | explore | lightweight non-SDD exploration; use `sdd-explore` only for confirmed SDD origin |
 | "debug X" / error context | debug | debugger |
 | "review X" | review | code-reviewer in full-repo mode |
 | any other task | direct | orchestrator handles directly, no delegation |
@@ -201,10 +209,7 @@ The orchestrator adapts based on intent — not separate agents per mode:
 ```yaml
 specs_path: ~/dev/specter/openspec  # central repo for all SDD artifacts
 openspec_store: specter             # pass --store specter from any working directory
-persistence_mode: hybrid         # openspec | engram | hybrid
-                                 # hybrid = write to specter/ AND persist to Engram
-                                 # varies by project: use openspec for file-heavy flows,
-                                 # engram-only for lightweight or exploratory work
+# SDD artifacts persist only in OpenSpec filesystem, never Engram.
 ```
 
 All SDD agents read and write artifacts under `specs_path/changes/{project}-{change-name}/`:

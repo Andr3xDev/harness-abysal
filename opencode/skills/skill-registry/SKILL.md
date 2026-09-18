@@ -18,6 +18,7 @@ Claude Code. It governs delegation prompts only; runtime plugin activation is se
 - Inject only the target role's mandatory paths and matching conditional paths.
 - Do not inject Caveman, Ponytail, or Karpathy universally.
 - Caveman role guidance is only for user-facing primaries: `orchestrator` and `strategist`.
+- Never delegate to external Cavecrew agents (`cavecrew-builder`, `cavecrew-investigator`, `cavecrew-reviewer`); route only to named harness agents. Cavecrew is external tooling, distinct from Caveman.
 - Ponytail is never injected into SDD, review, or infrastructure executors.
 - Judgment-day belongs only to the orchestrator; never inject it into `judge-a` or `judge-b`.
 - The SDD protocol is mandatory for the orchestrator and every `sdd-*` role.
@@ -66,7 +67,7 @@ Apply a conditional skill only when both the role and task trigger match.
 | senior-architect | orchestrator, strategist, sdd-explore, sdd-propose, sdd-design | Architecture, system design, database choice, stack evaluation, dependency analysis, or trade-off comparison. |
 | software-design-patterns | strategist, sdd-explore, sdd-design | Choosing, understanding, or identifying a design pattern. |
 | event-schema | orchestrator, strategist, builder, test-writer, implementer, debugger, code-reviewer, sdd-explore, sdd-propose, sdd-spec, sdd-design, sdd-verify | Domain event, event schema, event-driven behavior, or emitted event. |
-| ponytail | debugger | `AUTH: apply-fix`; do not inject for `diagnose-only`. |
+| ponytail | debugger | `AUTH: autonomous-small-fix`; do not inject for `diagnose-only`. |
 | context-compact | orchestrator, strategist | Context compaction, reset, clear, or state recovery. |
 | skill-registry | orchestrator, builder | Skill installation, removal, creation, movement, rename, registry refresh, or role-policy change. |
 | judgment-day | orchestrator | Adversarial review, dual review, judgment day, or critical review protocol. |

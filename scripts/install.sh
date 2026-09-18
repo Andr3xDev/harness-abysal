@@ -121,6 +121,41 @@ register_specter_store() {
   exit 1
 }
 
+remove_cavecrew_assets() {
+  local asset
+  local -a claude_assets
+
+  rm -f -- "$HOME/.config/opencode/agents/cavecrew-builder.md"
+  rm -f -- "$HOME/.config/opencode/agents/cavecrew-investigator.md"
+  rm -f -- "$HOME/.config/opencode/agents/cavecrew-reviewer.md"
+  rm -rf -- "$HOME/.config/opencode/skills/cavecrew"
+  node - "$HOME/.config/opencode/.caveman-opencode-ownership.json" <<'NODE'
+const fs = require('fs');
+const target = process.argv[2];
+if (fs.existsSync(target)) {
+  const ownership = JSON.parse(fs.readFileSync(target, 'utf8'));
+  for (const entry of [
+    'agents/cavecrew-builder.md',
+    'agents/cavecrew-investigator.md',
+    'agents/cavecrew-reviewer.md',
+    'skills/cavecrew',
+  ]) delete ownership.entries?.[entry];
+  fs.writeFileSync(target, JSON.stringify(ownership, null, 2) + '\n');
+}
+NODE
+
+  shopt -s nullglob
+  claude_assets=(
+    "$HOME/.claude/plugins/cache/caveman/caveman/"*/agents/cavecrew-*.md
+    "$HOME/.claude/plugins/cache/caveman/caveman/"*/plugins/caveman/agents/cavecrew-*.md
+    "$HOME/.claude/plugins/marketplaces/caveman/agents/cavecrew-*.md
+    "$HOME/.claude/plugins/marketplaces/caveman/plugins/caveman/agents/cavecrew-*.md
+  )
+  for asset in "${claude_assets[@]}"; do
+    rm -f -- "$asset"
+  done
+}
+
 backup "$HOME/.claude/agents"
 backup "$HOME/.claude/commands"
 backup "$HOME/.claude/skills"
@@ -179,6 +214,7 @@ git clone --depth 1 --branch main https://github.com/JuliusBrussee/caveman.git "
   cd "$caveman_dir"
   node bin/install.js --only claude --only opencode
 )
+remove_cavecrew_assets
 
 echo "installed code-agents config"
 echo "next: set GITHUB_TOKEN, authenticate Linear/Claude connectors, ensure ~/.local/bin is in PATH, then run: claude doctor && opencode debug config"

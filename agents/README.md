@@ -10,6 +10,8 @@ This directory holds the sub-agent definitions used by Claude Code for the multi
 
 It is a mirror of `/home/andrex/.config/opencode/prompts/` (OpenCode). Both mirrors must stay behaviorally equivalent — any change made to an agent in one mirror must be replicated in the other.
 
+TDD runs only when behavior value, existing coverage, duplication/overlap, and protection of current behavior justify it. Low-value, duplicate/overlapping, stale, or disproportionate tests are rejected. Otherwise `builder` handles work with the smallest useful proof. Bug regressions require meaningful externally observable behavior proportionate to risk.
+
 <br>
 
 ## How SDD changes get archived
@@ -20,13 +22,9 @@ It is a mirror of `/home/andrex/.config/opencode/prompts/` (OpenCode). Both mirr
 openspec archive "<project>-<change-name>" -y --store specter
 ```
 
-Before archiving, the agent requires a passing verification report from Engram and refuses to proceed if it's missing or has CRITICAL findings.
+Before archiving, the agent requires `{change-folder}/verify-report.md` and refuses to proceed if it is missing or has CRITICAL findings.
 
-If the CLI archive command is unavailable or fails, the agent falls back to the manual pattern from the reference `openspec-archive-change` skill, documented directly in the file:
-
-- `openspec status --change "<name>" --json --store specter` to read `changeRoot` / `planningHome.changesDir` and check artifact completion
-- Read `tasks.md` and flag (not block) incomplete tasks
-- `mkdir -p "<changesDir>/archive"` then `mv "<changeRoot>" "<changesDir>/archive/YYYY-MM-DD-<name>"`
+If the CLI archive command is unavailable or fails, archive blocks. `sdd-archive` reports the command and failure to the orchestrator; it never creates directories or moves change folders manually.
 
 Change-name convention (`{project}-{change-name}`, kebab-case, hyphens only) is defined once at `/home/andrex/dev/specter/openspec/AGENTS.md` and validated by `sdd-propose` before a change is created — this README does not duplicate that rule.
 
@@ -65,9 +63,13 @@ The authoritative role policy lives in `opencode/skills/skill-registry/SKILL.md`
 | echor-onboarder, echor-updater, echor-consultador, echor-validator | echor-vault |
 
 `caveman` is only injected into user-facing primaries (`orchestrator`, `strategist`).
-`ponytail` is mandatory only for code writers and conditional for an `apply-fix` debugger task.
+`ponytail` is mandatory only for code writers and conditional for an `autonomous-small-fix` debugger task.
 It is never injected into SDD, review, or infrastructure executors. `karpathy-guidelines`
 is mandatory for orchestration, strategy, SDD, review, and debugging.
+
+Never delegate to external Cavecrew agents (`cavecrew-builder`, `cavecrew-investigator`,
+`cavecrew-reviewer`); route only to named harness agents. Cavecrew is external tooling,
+distinct from the Caveman communication skill/plugin.
 
 Conditional skills (`find-docs`, `refactoring-techniques`, `senior-architect`,
 `software-design-patterns`, `event-schema`, `context-compact`, and `skill-registry`)
@@ -98,7 +100,7 @@ delegation policy.
 
 In OpenCode, permissions are granular per command via `opencode.json` (`allow`/`ask`/`deny` per agent). Claude Code has no equivalent native mechanism — there is no per-agent command allow-list built into the agent frontmatter beyond `tools`/`disallowedTools`. The gap is closed with `PreToolUse` hooks registered in `settings.json`.
 
-`/home/andrex/.claude/hooks/infra-agent-bash-guard.py` is the reference implementation of this pattern. It intercepts `Bash` calls, keyed on `agent_type`, mirroring the role-scoped OpenCode policy. SDD agents are limited to their documented `openspec` and read-only Git commands; reviewers and judges can run tests, linters, and read-only Git without gaining open shell access.
+`/home/andrex/.claude/hooks/infra-agent-bash-guard.py` is the reference implementation of this pattern. It intercepts `Bash` calls, keyed on `agent_type`, mirroring the role-scoped OpenCode policy. SDD agents are limited to documented `openspec` and read-only Git commands; prompt scope limits each artifact writer to its own file. Reviewers and judges can run tests, linters, and read-only Git without gaining open shell access.
 
 | Agent | Allow | Ask | Deny |
 |---|---|---|---|
@@ -106,11 +108,11 @@ In OpenCode, permissions are granular per command via `opencode.json` (`allow`/`
 | log-reader | `rg *`, `wc *`, `du *`, `ls *`, `zcat *`, `gzip -cd *`, `journalctl *`, `docker logs *`, `kubectl logs *`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
 | codegraph-maintainer | `codegraph status/query/explore/files/node/callers/callees/impact/affected`, `git *` | `git reset --hard*`, `codegraph unlock/init/sync/index*`, `codegraph-health*` | `git commit*`, `git push*` |
 | engram-maintainer | `engram context/search/stats/projects list/doctor/timeline` | `engram delete *`, `engram export *` | all unrelated shell commands |
-| code-reviewer | `npm test*`/`npm run test*`/`npm run lint*`, `yarn test*`/`lint*`, `pnpm test*`/`lint*`, `pytest*`, `python -m pytest*`, `go test*`/`vet*`, `cargo test*`/`clippy*`, `ruff*`, `eslint*`, `flake8*`, `mypy*`, `rubocop*`, `bundle exec rspec*`, `mvn test*`, `gradle test*`, `make test*`, `tox*`, `git *` | `git reset --hard*` | `git commit*`, `git push*` |
+| code-reviewer | Scoped Node, Python, Java/Kotlin, Go, Rust, .NET, Ruby, PHP, and `make` test/lint/format-check/typecheck/compile/build/static-analysis commands; read-only Git | `git reset --hard*` | package install/update/sync/add/remove/publish, arbitrary scripts, shell chaining, other shell commands, `git commit*`, `git push*` |
 | judge-a, judge-b | Same test/lint and read-only Git commands as `code-reviewer` | `git reset --hard*` | `git commit*`, `git push*` |
-| sdd-explore | `openspec context`/`doctor`/`list` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-explore | `openspec context`/`doctor`/`list` with `--store specter`, `openspec store list`, read-only Git; native `Write`/`Edit` for prompt-scoped `explore.md` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | sdd-propose, sdd-spec, sdd-design, sdd-tasks | `openspec status`/`validate`/`show`/`new`/`instructions` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
-| sdd-verify | `openspec status`/`validate` with `--store specter`, `openspec store list`, reviewer test/lint, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
+| sdd-verify | `openspec status`/`validate` with `--store specter`, `openspec store list`, reviewer test/lint, read-only Git; native `Write`/`Edit` for prompt-scoped `verify-report.md` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | sdd-archive | `openspec status`/`validate`/`show`/`instructions`/`archive` with `--store specter`, `openspec store list`, read-only Git | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | echor-onboarder, echor-validator | Read-only Git (`status`/`log`/`diff`/`show`/`rev-parse`), `ls *`, `rg *`, `cat *` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
 | echor-updater | Same read-only Git and inspection commands as `echor-onboarder` | `git reset --hard*` | all other shell commands, `git commit*`, `git push*` |
@@ -120,15 +122,11 @@ Any command not matched by `allow` or `ask` falls through to `deny`. Any `agent_
 
 This is the pattern to reuse if another agent needs a Bash restriction in the future — for example, `test-writer` arguably should not touch production code paths. Today that boundary is prompt discipline only (documented in `test-writer`'s own instructions); no hook enforces it. This is a known gap, not yet addressed.
 
-### Extension: `debugger` Edit gate
+### `debugger` edit policy
 
-`debugger` is different from the three agents above: its AUTH gate (`diagnose-only` vs `apply-fix`) is not a fixed per-agent allow-list, it varies *per delegation* — the orchestrator states it in the text of each delegation prompt. A `PreToolUse` hook only receives `tool_name` and `agent_type` on stdin; it never sees the delegation prompt itself, so it has no way to tell whether a given `Edit` call happened under `diagnose-only` or `apply-fix`. Conditionally blocking only the `diagnose-only` case is therefore not possible at the hook layer — that distinction exists only in text invisible to the hook.
+`debugger` may apply any minimal fix when root cause, intended behavior, blast radius, and verification are clear and bounded; file count and change category alone do not require escalation. This includes a clear, verifiable localized environment or infrastructure configuration-variable correction. It escalates only uncertain behavior/root cause, broad or hard-to-predict impact, design/product/security trade-offs, migrations or other irreversible actions, or work that cannot be safely verified. `AUTH: diagnose-only` is an explicit investigation-only override: document root cause and proposed fix, but do not edit. Every diagnosis or fix reports root cause, exact files/changes, validation, and residual risk to the orchestrator.
 
-Given that limitation, the technical enforcement added is unconditional: `infra-agent-bash-guard.py` now also intercepts `Edit` (via a second `PreToolUse` matcher in `settings.json`), and returns `"ask"` for every `Edit` call made by `agent_type == "debugger"`, regardless of AUTH. This does not break `apply-fix` mode — the user just confirms, as expected — but it closes the gap where a `diagnose-only` delegation could otherwise edit production code with nothing but a prompt-level promise standing in the way. It is a floor (always confirm), not a precise gate (confirm only when unauthorized); the AUTH text in the delegation prompt is still what tells the human confirming whether the edit was actually authorized.
-
-Coverage after this change: SDD agents, `code-reviewer`, `judge-a`, `judge-b`, `aws`, `log-reader`, `codegraph-maintainer`, `engram-maintainer`, `echor-onboarder`, `echor-updater`, and `echor-validator` are Bash-gated as above; `debugger` is Edit-gated as described here. Bash behavior for `debugger` is unchanged (still full framework/native permissions, no hook rule).
-
-In OpenCode, the mirrored change is `permission.edit` for the `debugger` agent in `opencode.json`, flipped from `"allow"` to `"ask"` — same reasoning, same limitation (OpenCode's permission engine also can't see per-delegation AUTH text, only the static per-agent config).
+Claude Code has no `Edit` `PreToolUse` matcher for `debugger`, so self-contained fixes do not ask permission solely because of agent type. OpenCode mirrors this with `debugger` `edit` and `write` permissions set to `"allow"`. Existing destructive-command confirmation and `git commit`/`git push` denial still apply.
 
 <br>
 

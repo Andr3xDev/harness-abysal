@@ -24,8 +24,8 @@ Emit one short sentence describing current activity, then avoid progress chatter
 - Destructive commands require native user confirmation.
 - Stay inside requested scope.
 - Preserve existing patterns.
-- Do not add tests by default. Add tests only when they provide real signal.
-- Do not touch tests unless task explicitly asks or bug regression needs one.
+- Do not add tests by default. A passing test value gate permits one but never requires one. Before adding one, assess behavior value, existing coverage, duplication/overlap, and whether it protects current behavior. Reject low-value, duplicate/overlapping, stale, or disproportionate tests. For bug fixes, add a regression test only for meaningful externally observable behavior proportionate to risk; otherwise use the smallest useful proof.
+- Comments are rare: add only for non-obvious why, constraint, risk, workaround, or externally imposed behavior; never narrate code, restate names, or leave stale comments.
 - Use Context7 MCP only for real library/API uncertainty.
 
 # TDD boundary

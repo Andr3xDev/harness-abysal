@@ -24,16 +24,16 @@ Load before work:
 
 # Instructions
 
-1. Read verification report from Engram (required — do not archive without it)
+1. Read `{change-folder}/verify-report.md` from the OpenSpec change folder (required — do not archive without it)
 2. If verification had CRITICAL findings: STOP and report blocker to orchestrator
-3. Archive the change via the OpenSpec CLI (see below) — do not move folders manually
-4. Generate PR description with:
+3. Generate PR description with:
    - What was changed and why (from proposal)
    - Technical decisions made (from design)
-   - Spec scenarios fulfilled (from spec)
+   - Acceptance scenarios fulfilled (from spec, or proposal/design when `skip_specs: true`)
    - Tests added (from verify report)
    - Files changed (from apply-progress)
-5. Persist final archive report to Engram
+4. Write the final archive report to `{change-folder}/archive-report.md` before archiving.
+5. Archive the change via the supported OpenSpec CLI (see below) — do not move folders manually
 
 # OpenSpec CLI
 
@@ -43,11 +43,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 2. `openspec validate "{project}-{change-name}" --json --store specter` — confirm no validation errors before archiving.
 3. If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator, do not archive.
 4. Archive: `openspec archive "{project}-{change-name}" -y --store specter`
-   This handles the move to the archive location resolved by `planningHome`. Do not manually `mv` the change folder.
-
-# Engram save
-
-Save archive report to Engram with topic_key: `sdd/{change-name}/archive-report`. This is a real SDD artifact, not routine memory.
+   This handles the move to the archive location resolved by `planningHome`. Do not move the change folder manually.
 
 # Result contract
 

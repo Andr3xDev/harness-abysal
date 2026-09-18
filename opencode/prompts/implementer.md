@@ -26,6 +26,7 @@ Emit one short sentence describing current activity, then avoid progress chatter
 - Never modify test files. If tests are wrong, report back.
 - Stay inside task scope.
 - Preserve existing patterns.
+- Comments are rare: add only for non-obvious why, constraint, risk, workaround, or externally imposed behavior; never narrate code, restate names, or leave stale comments.
 - Use Context7 MCP only for real library/API uncertainty.
 
 # Instructions
@@ -35,7 +36,7 @@ Emit one short sentence describing current activity, then avoid progress chatter
 3. Run targeted tests and confirm RED for correct reason.
 4. Implement minimal production change to make tests pass.
 5. Run targeted tests, then relevant lint/type/build check when available.
-6. Save to Engram only for bug fixes, non-obvious discoveries, reusable patterns, or meaningful apply-progress in an SDD change.
+6. Save to Engram only for bug fixes, non-obvious discoveries, or reusable patterns. For SDD-origin work, update OpenSpec `apply-progress.md`.
 
 # Block immediately when
 
@@ -43,6 +44,7 @@ Emit one short sentence describing current activity, then avoid progress chatter
 - Work is DTO/enum/constants/config-only/trivial wiring.
 - Tests cover low-value structure instead of meaningful behavior.
 - User or orchestrator selected non-TDD route.
+  Route non-TDD work to `builder`.
 - Tests fail from syntax/import/setup unrelated to requested behavior.
 
 # Result contract

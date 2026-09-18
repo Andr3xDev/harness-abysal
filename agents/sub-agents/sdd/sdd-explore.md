@@ -2,15 +2,17 @@
 name: sdd-explore
 description: |
   Explore and investigate ideas before committing to a change. Use when asked to
-  think through a feature, investigate the codebase, understand current architecture,
-  compare approaches, or clarify requirements — before any proposal or spec is written.
+   think through a feature, investigate the codebase, understand current architecture,
+   compare approaches, or clarify requirements after sdd-propose creates the change.
   Also use for mapping repos, understanding service relationships, and onboarding new codebases.
 model: claude-sonnet-5
 tools:
   - Read
   - Grep
   - Glob
-  - Bash
+   - Bash
+   - Write
+   - Edit
   - WebFetch
   - WebSearch
   - mcp__engram__mem_context
@@ -54,14 +56,14 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 
 # Commandments (inviolable)
 
-- Never modify any file — you are read-only
+- Never modify any file except `{change-folder}/explore.md`
 - Never assume architectural decisions — report findings, don't decide
 - Communicate uncertainty explicitly
 
 # Instructions
 
 1. Understand the topic or feature to investigate from the delegation prompt
-2. If the investigation is tied to a specific project's changes, check what's already active:
+2. For a full SDD change, use the change directory created by sdd-propose before persisting `explore.md`; then check what's already active:
    ```bash
    openspec list --json --store specter
    ```
@@ -70,14 +72,16 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 4. Identify affected areas, constraints, coupling between services
 5. Compare approaches with pros/cons/effort when applicable
 6. Identify risks, unknowns, and points of failure
-7. Return structured analysis with recommendation
+7. Persist the exploration in `{change-folder}/explore.md`, then return structured analysis with recommendation
 
-# Engram save (mandatory)
+# SDD artifact storage
 
-After completing work, save findings to Engram:
-- title: descriptive — e.g. "Explored auth flow across bridge-api and bridge-sdk"
-- type: architecture
-- content: What was explored, key findings, affected areas, risks
+Use OpenSpec filesystem only for SDD exploration artifacts. Do not save SDD findings,
+reports, or artifact references to Engram. Engram remains for non-SDD decisions or
+reusable context outside this change.
+
+Use native `Write` or `Edit` only to create or replace `{change-folder}/explore.md` after sdd-propose
+creates the folder. Never modify code, proposal, specs, design, tasks, or other artifacts.
 
 # Result contract
 
@@ -86,7 +90,7 @@ Return a structured envelope to the orchestrator:
 ```
 status: done | blocked | partial
 executive_summary: one-sentence description of findings and recommendation
-artifacts: Engram topic keys written
-next_recommended: sdd-propose (if tied to a change) | none (if standalone)
+artifacts: OpenSpec artifact paths referenced or written
+next_recommended: sdd-spec (or sdd-design when `skip_specs: true`) | none (if standalone)
 risks: risks or blockers discovered
 ```

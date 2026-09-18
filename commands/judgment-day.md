@@ -11,5 +11,5 @@ Follow the protocol exactly:
 3. Launch judge-a and judge-b in parallel with identical target
 4. Synthesize into verdict table (confirmed, suspect, contradiction, INFO)
 5. Present to human — ask before fixing
-6. If fixes approved: delegate to implementer with AUTH: apply-fix
+6. If fixes approved: preserve source lane — `implementer` for TDD origin, `builder` for non-TDD origin; rerun test value gate when origin is unknown
 7. Re-judge after fixes — repeat until APPROVED or ESCALATED

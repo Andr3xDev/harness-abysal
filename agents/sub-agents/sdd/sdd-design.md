@@ -11,18 +11,10 @@ tools:
   - Grep
   - Glob
   - Bash
-  - mcp__engram__mem_context
-  - mcp__engram__mem_search
-  - mcp__engram__mem_save
-  - mcp__engram__mem_update
-  - mcp__engram__mem_current_project
-  - mcp__engram__mem_get_observation
-  - mcp__engram__mem_save_prompt
   - mcp__context7__resolve-library-id
   - mcp__context7__query-docs
   - mcp__codegraph__codegraph_explore
 mcpServers:
-  - engram
   - context7
   - codegraph
 color: blue
@@ -66,14 +58,15 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
 
 # Instructions
 
-1. Read the proposal from Engram (required)
-2. Read relevant codebase to understand current patterns and conventions
-3. Resolve the change name (see above) and get the resolved output path for this artifact:
+1. Read `proposal.md` and `explore.md` from the OpenSpec change folder (required)
+2. Unless `proposal.md` sets `skip_specs: true`, read the change's delta specs (required)
+3. Read relevant codebase to understand current patterns and conventions
+4. Resolve the change name (see above) and get the resolved output path for this artifact:
    ```bash
    openspec instructions design --change "<project>-<change-name>" --json --store specter
    ```
    Parse `resolvedOutputPath` from the JSON response — write design.md there, not to an assumed path.
-4. Create design.md with:
+5. Create design.md with:
    - **Approach**: chosen technical approach with justification
    - **Alternatives considered**: what else was evaluated and why not
    - **Architecture decisions**: each decision with rationale (ADR-lite format)
@@ -81,22 +74,18 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
    - **Sequence diagram**: for multi-service or complex flows (mermaid or text)
    - **Conventions**: which existing patterns to follow, reference files
    - **Dependencies**: external libs, services, APIs needed
-5. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
+6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
 
 # File output (mandatory)
 
-Write the design content to the `resolvedOutputPath` returned by `openspec instructions design --change "<name>" --json --store specter` (see Instructions step 3). Do not hardcode or assume the path.
-
-# Engram save (mandatory)
-
-Save design to Engram with topic_key: `sdd/{change-name}/design`
+Write the design content to the `resolvedOutputPath` returned by `openspec instructions design --change "<name>" --json --store specter` (see Instructions step 4). Do not hardcode or assume the path.
 
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: key technical decisions and approach chosen
-artifacts: topic keys or file paths written
+artifacts: OpenSpec file paths written
 next_recommended: sdd-tasks
 risks: technical risks, dependency risks, decisions needing human approval
 ```

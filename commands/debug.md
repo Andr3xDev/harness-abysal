@@ -9,8 +9,8 @@ Follow the orchestrator's debug mode workflow:
 2. Search Engram for prior occurrences of this error
 3. Delegate to debugger with:
    - Error context from "$ARGUMENTS" (stack trace, error message, reproduction steps)
-   - AUTH: diagnose-only (default). Add AUTH: apply-fix only if the user explicitly says "fix it"
-4. Present root cause analysis and proposed fix
-5. If AUTH was apply-fix: run sdd-verify after the fix
+   - AUTH: autonomous-small-fix (default). Use AUTH: diagnose-only only for an explicit investigation-only request
+4. Present debugger report: root cause, exact files/changes, validation, and residual risk
+5. If debugger applied a fix from confirmed SDD origin: run sdd-verify. Otherwise close after debugger proof.
 
 If "$ARGUMENTS" is a stack trace, pass it verbatim to the debugger.

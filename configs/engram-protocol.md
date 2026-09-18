@@ -45,13 +45,9 @@ content:
 - Unsure about key → call `mem_suggest_topic_key` first
 - Know exact ID to fix → use `mem_update`
 
-### SDD artifact saves
+### SDD artifacts
 
-SDD agents (propose, spec, design, tasks, verify, archive) save with `capture_prompt: false`
-since these are automated artifacts, not human-driven decisions.
-
-Topic key convention: `sdd/{change-name}/{phase}`
-Examples: `sdd/feat-messages/proposal`, `sdd/feat-messages/spec`, `sdd/feat-messages/verify-report`
+SDD artifacts live only in the OpenSpec filesystem. Do not save, retrieve, or index them in Engram.
 
 ---
 
@@ -73,7 +69,7 @@ Search PROACTIVELY when:
 - User mentions a topic you have no context on
 - User's FIRST message references the project, a feature, or a problem →
   call `mem_search` with keywords from their message BEFORE responding
-- Before any SDD phase: check if prior work exists for this change
+- Before any non-SDD phase: check if prior work exists for this change
 
 ---
 

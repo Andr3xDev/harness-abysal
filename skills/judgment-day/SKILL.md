@@ -45,8 +45,9 @@ the standard code-reviewer provides.
    - **Contradiction**: judges disagree → escalate to user
    - **INFO**: theoretical warnings or suggestions → log only
 5. Present verdict table to user. Ask before fixing confirmed issues.
-6. If user approves fixes: delegate to implementer with AUTH: apply-fix and
-   CONSTRAINTS: only fix confirmed issues, nothing else.
+6. If user approves fixes: preserve the source lane — TDD work goes to
+   `implementer`; non-TDD work goes to `builder`; if unknown, rerun the
+   test-value gate. Constrain remediation to confirmed issues only.
 7. After fixes applied: re-launch both judges in parallel.
 8. Repeat until APPROVED (zero confirmed CRITICALs and real WARNINGs) or ESCALATED.
 

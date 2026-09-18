@@ -30,9 +30,10 @@ Use Context7 MCP ONLY when there is a real doubt about a library/framework/SDK A
 
 # Instructions
 
-1. Read the proposal from Engram (required)
-2. Read relevant codebase to understand current patterns and conventions
-3. Create design.md with:
+1. Read `proposal.md` and `explore.md` from the OpenSpec change folder (required)
+2. Unless `proposal.md` sets `skip_specs: true`, read the change's delta specs (required)
+3. Read relevant codebase to understand current patterns and conventions
+4. Create design.md with:
    - **Approach**: chosen technical approach with justification
    - **Alternatives considered**: what else was evaluated and why not
    - **Architecture decisions**: each decision with rationale (ADR-lite format)
@@ -55,16 +56,12 @@ Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens
 
 Write to the `resolvedOutputPath` returned by `openspec instructions design --change "{project}-{change-name}" --json --store specter`. Do not invent or hardcode the path — use `template` as the structure.
 
-# Engram save
-
-Save design to Engram with topic_key: `sdd/{change-name}/design`. This is a real SDD artifact, not routine memory.
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: key technical decisions and approach chosen
-artifacts: topic keys or file paths written
+artifacts: OpenSpec file paths written
 next_recommended: sdd-tasks
 risks: technical risks, dependency risks, decisions needing human approval
 ```

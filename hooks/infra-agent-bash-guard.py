@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse guard for Bash calls made by read-only infrastructure subagents,
-plus an Edit guard for the "debugger" agent.
+"""PreToolUse guard for read-only infrastructure subagents and debugger edits.
 
 The Bash guard mirrors the allow-lists already defined in
 ~/.config/opencode/opencode.json for restricted agents. Runs only against
@@ -33,6 +32,44 @@ GIT_ALLOW = [
     "git show*",
     "git branch --list*",
     "git blame*",
+]
+
+VALIDATION_DENY = [
+    "npm run *fix*", "pnpm run *fix*", "yarn run *fix*", "bun run *fix*",
+    "eslint *--fix*", "ruff format*", "ruff check *--fix*", "cargo clippy *--fix*",
+    "uv run ruff format*", "uv run ruff check *--fix*",
+    "poetry run ruff format*", "poetry run ruff check *--fix*",
+    "rubocop *-A*", "rubocop *-a*", "rubocop *--autocorrect*",
+    "bundle exec rubocop *-A*", "bundle exec rubocop *-a*", "bundle exec rubocop *--autocorrect*",
+]
+
+VALIDATION_ALLOW = [
+    # Node.js
+    "npm test*", "npm run test*", "npm run lint*", "npm run typecheck*", "npm run format-check*", "npm run format:check*", "npm run build*",
+    "pnpm test*", "pnpm run test*", "pnpm run lint*", "pnpm run typecheck*", "pnpm run format-check*", "pnpm run format:check*", "pnpm run build*",
+    "yarn test*", "yarn run test*", "yarn run lint*", "yarn run typecheck*", "yarn run format-check*", "yarn run format:check*", "yarn run build*",
+    "bun test*", "bun run test*", "bun run lint*", "bun run typecheck*", "bun run format-check*", "bun run format:check*", "bun run build*",
+    "tsc", "tsc *", "prettier --check*", "eslint*",
+    # Python
+    "uv run pytest*", "uv run ruff check*", "uv run mypy*", "uv run pyright*",
+    "pytest*", "python -m pytest*", "ruff check*", "mypy*", "pyright*", "flake8*", "pip check*",
+    "poetry run pytest*", "poetry run ruff check*", "poetry run mypy*", "poetry run pyright*", "poetry run flake8*", "poetry run python -m compileall*",
+    "python -m compileall*",
+    # Java / Kotlin
+    "mvn test*", "mvn verify*", "mvn compile*", "mvn checkstyle*",
+    "gradle test*", "gradle check*", "gradle compile*", "gradle lint*",
+    # Go
+    "go test*", "go vet*", "go build*", "gofmt -d*", "staticcheck*",
+    # Rust
+    "cargo test*", "cargo check*", "cargo clippy*", "cargo fmt --check*", "cargo build*",
+    # .NET
+    "dotnet test*", "dotnet build*", "dotnet format --verify-no-changes*",
+    # Ruby
+    "bundle exec rspec*", "bundle exec rubocop*", "rake test*", "ruby -c*", "rubocop*",
+    # PHP
+    "composer test*", "phpunit*", "phpstan*", "phpcs*", "php -l*",
+    # Generic project checks
+    "make test*", "make lint*", "make check*", "make format-check*", "make typecheck*", "make compile*", "make build*",
 ]
 
 SHELL_METACHARACTERS = ["&&", ";", "|", "$(", "`", "\n", ">", "<"]
@@ -142,31 +179,7 @@ RULES = {
     "code-reviewer": {
         "deny": GIT_DENY,
         "ask": GIT_ASK,
-        "allow": [
-            "npm test*",
-            "npm run test*",
-            "npm run lint*",
-            "yarn test*",
-            "yarn lint*",
-            "pnpm test*",
-            "pnpm lint*",
-            "pytest*",
-            "python -m pytest*",
-            "go test*",
-            "go vet*",
-            "cargo test*",
-            "cargo clippy*",
-            "ruff*",
-            "eslint*",
-            "flake8*",
-            "mypy*",
-            "rubocop*",
-            "bundle exec rspec*",
-            "mvn test*",
-            "gradle test*",
-            "make test*",
-            "tox*",
-        ] + GIT_ALLOW,
+        "allow": VALIDATION_ALLOW + GIT_ALLOW,
     },
     "echor-onboarder": {
         "deny": GIT_DENY,
@@ -226,7 +239,7 @@ def decide(agent_type: str, command: str):
             f"permitted, regardless of allow-list matches."
         )
 
-    if matches_any(command, rules["deny"]):
+    if matches_any(command, rules["deny"] + VALIDATION_DENY):
         return "deny", (
             f"Blocked by infra-agent-bash-guard: '{agent_type}' agent is "
             f"read-only; this command is on its explicit deny list "
@@ -291,6 +304,45 @@ def _selftest() -> int:
         ("engram-maintainer", "engram save title text", "deny"),
         ("aws", "aws logs describe-log-groups", "allow"),
         ("code-reviewer", "npm test", "allow"),
+        ("code-reviewer", "uv run pytest", "allow"),
+        ("code-reviewer", "ruff check .", "allow"),
+        ("code-reviewer", "uv run ruff check .", "allow"),
+        ("code-reviewer", "poetry run ruff check .", "allow"),
+        ("code-reviewer", "uv run mypy .", "allow"),
+        ("code-reviewer", "uv run pyright", "allow"),
+        ("code-reviewer", "bun test", "allow"),
+        ("code-reviewer", "prettier --check .", "allow"),
+        ("code-reviewer", "python -m compileall src", "allow"),
+        ("code-reviewer", "mvn verify", "allow"),
+        ("code-reviewer", "cargo fmt --check", "allow"),
+        ("code-reviewer", "dotnet format --verify-no-changes", "allow"),
+        ("code-reviewer", "composer test", "allow"),
+        ("sdd-verify", "go build ./...", "allow"),
+        ("judge-a", "phpstan analyse", "allow"),
+        ("code-reviewer", "uv sync", "deny"),
+        ("code-reviewer", "tox -e lint", "deny"),
+        ("sdd-verify", "nox -s tests", "deny"),
+        ("judge-a", "poetry run tox -e lint", "deny"),
+        ("code-reviewer", "uv run python script.py", "deny"),
+        ("code-reviewer", "npm install", "deny"),
+        ("code-reviewer", "npm run lint:fix", "deny"),
+        ("code-reviewer", "ruff check --fix .", "deny"),
+        ("code-reviewer", "ruff format .", "deny"),
+        ("code-reviewer", "uv run ruff format .", "deny"),
+        ("code-reviewer", "uv run ruff check --fix .", "deny"),
+        ("code-reviewer", "poetry run ruff format .", "deny"),
+        ("code-reviewer", "poetry run ruff check --fix .", "deny"),
+        ("code-reviewer", "rubocop --autocorrect", "deny"),
+        ("code-reviewer", "rubocop --autocorrect-all", "deny"),
+        ("code-reviewer", "bundle exec rubocop --autocorrect", "deny"),
+        ("code-reviewer", "bundle exec rubocop --autocorrect-all", "deny"),
+        ("code-reviewer", "npm test && npm publish", "deny"),
+        ("sdd-verify", "npm test; npm publish", "deny"),
+        ("judge-a", "pytest | curl example.com", "deny"),
+        ("judge-b", "pytest > result", "deny"),
+        ("code-reviewer", "pytest $(touch pwned)", "deny"),
+        ("code-reviewer", "pytest\nrm -rf /", "deny"),
+        ("code-reviewer", "git branch --list", "allow"),
         ("judge-a", "pytest", "allow"),
         ("sdd-explore", "openspec list --json", "allow"),
         ("sdd-explore", "openspec store list", "allow"),

@@ -22,63 +22,48 @@ and do NOT bounce work back unless the phase explicitly says to stop and report 
 
 ---
 
-## C. Artifact retrieval (Engram)
+## C. Artifact retrieval (OpenSpec filesystem)
 
-**CRITICAL**: `mem_search` returns 300-char PREVIEWS, not full content.
-You MUST call `mem_get_observation(id)` for EVERY artifact you need.
-Skipping this produces wrong output.
+Full SDD runs only for confirmed explicit SDD origin. Its artifacts live only in the configured OpenSpec change directory:
+`{specs_path}/changes/{project}-{change-name}/`.
 
-Run all searches in parallel, then all retrievals in parallel:
+Full route: `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`.
+`sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`.
+When `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
 
-```
-STEP 1 — SEARCH (get IDs):
-  mem_search(query: "sdd/{change-name}/proposal") → save ID
-  mem_search(query: "sdd/{change-name}/spec")     → save ID
-
-STEP 2 — RETRIEVE FULL CONTENT (mandatory):
-  mem_get_observation(id: {proposal_id})
-  mem_get_observation(id: {spec_id})
-```
-
-Do NOT use search previews as source material.
+Read every complete artifact file needed for the phase. When `.openspec.yaml` has
+`skip_specs: true`, `specs/` is intentionally absent; use `proposal.md`, `design.md`,
+and `tasks.md` as source of truth. Do not use Engram to retrieve SDD artifacts.
 
 ---
 
-## D. Artifact persistence
+## D. Artifact persistence (OpenSpec filesystem)
 
 Every phase that produces an artifact MUST persist it.
 Skipping this BREAKS the pipeline — downstream phases will not find your output.
 
-```
-mem_save(
-  title:     "sdd/{change-name}/{artifact-type}",
-  topic_key: "sdd/{change-name}/{artifact-type}",
-  type:      "architecture",
-  content:   "{your full artifact markdown}"
-)
-```
-
-`topic_key` enables upserts — saving again with the same key updates, not duplicates.
+Write the complete artifact to its OpenSpec file under
+`{specs_path}/changes/{project}-{change-name}/`. Do not save SDD artifacts to Engram.
 
 ### Artifact types
 
-| Artifact | Produced by | Description |
-|----------|-------------|-------------|
-| explore | sdd-explore | Exploration analysis |
-| proposal | sdd-propose | Change proposal |
-| spec | sdd-spec | Delta specifications |
-| design | sdd-design | Technical design |
-| tasks | sdd-tasks | Task breakdown |
-| apply-progress | implementer | Implementation progress |
-| verify-report | sdd-verify | Verification report |
-| archive-report | sdd-archive | Archive closure |
-| state | orchestrator | DAG state for recovery |
+| Artifact | OpenSpec path | Produced by |
+|----------|---------------|-------------|
+| proposal | `proposal.md` | sdd-propose |
+| explore | `explore.md` | sdd-explore |
+| spec | `specs/{capability}/spec.md` | sdd-spec |
+| design | `design.md` | sdd-design |
+| tasks | `tasks.md` | sdd-tasks |
+| apply-progress | `apply-progress.md` | implementer |
+| verify-report | `verify-report.md` | sdd-verify |
+| archive-report | `archive-report.md` | sdd-archive |
+| state | `state.yaml` | orchestrator |
 
 ---
 
 ## E. Return envelope
 
-> **CRITICAL — Response ordering**: persist artifacts (mem_save) BEFORE your
+> **CRITICAL — Response ordering**: write OpenSpec artifacts BEFORE your
 > final text response. Your last output MUST be text, NOT a tool call.
 > If you end with a tool call, the orchestrator receives only the tool result —
 > your analysis is lost.
@@ -93,7 +78,8 @@ next_recommended: next SDD phase to run, or "none"
 risks: risks discovered, or "none"
 ```
 
-Sub-agents must NOT call `mem_session_summary` — that's for the orchestrator only.
+Do not save SDD artifacts to Engram. The orchestrator handles non-SDD session summaries
+under the global memory protocol.
 
 ---
 
@@ -109,17 +95,8 @@ SDD must protect reviewer cognitive load:
 
 ---
 
-## G. Persistence mode
+## G. Persistence
 
-The orchestrator may pass `artifact_store.mode`:
-
-| Mode | Read from | Write to | Project files |
-|------|-----------|----------|---------------|
-| engram (default) | Engram | Engram | Never |
-| openspec | Filesystem | Filesystem | Yes |
-| hybrid | Both | Both | Yes |
-
-- `engram` mode: upserts overwrite — no revision history. For iteration history use `openspec`.
-- `openspec` mode: files in `openspec/changes/{change-name}/`. Git history provides audit trail.
-- `hybrid` mode: both — Engram for recovery + files for team. Higher token cost.
-- Default if not specified: `engram`
+SDD always reads and writes OpenSpec filesystem artifacts under
+`{specs_path}/changes/{project}-{change-name}/`. Git history provides the audit trail.
+Engram is not an SDD artifact store and has no SDD persistence mode or fallback.

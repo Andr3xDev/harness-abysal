@@ -3,13 +3,15 @@ name: sdd-verify
 description: |
   Validate that implementation matches specs, design, and tasks. Use when implementation
   reports done and the change must be verified against its contract before archive.
-  Runs tests, compares output against spec scenarios, reports deviations.
+  Runs tests, compares output against acceptance scenarios, reports deviations.
 model: claude-sonnet-5
 tools:
   - Read
   - Grep
   - Glob
-  - Bash
+   - Bash
+   - Write
+   - Edit
   - mcp__engram__mem_context
   - mcp__engram__mem_search
   - mcp__engram__mem_save
@@ -44,12 +46,12 @@ Use registered central store `specter` from any working directory. Never `cd` or
 # Commandments (inviolable)
 
 - Never modify code — you verify, you don't fix
-- Never skip a spec scenario — every GIVEN/WHEN/THEN must be checked
+- Never skip an acceptance scenario — check every spec GIVEN/WHEN/THEN, or every proposal/design acceptance scenario when `skip_specs: true`
 - Report honestly — if something doesn't match, say so even if it seems minor
 
 # Instructions
 
-1. Read spec, design, and tasks from Engram (all required)
+1. Read spec, design, tasks, and apply-progress from the OpenSpec change folder. When `.openspec.yaml` has `skip_specs: true`, use proposal, design, and tasks as source of truth.
 2. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
 3. Run the external CLI gate and include the raw output in the report — this is a real external check, not a self-reported one:
    ```bash
@@ -57,29 +59,36 @@ Use registered central store `specter` from any working directory. Never `cd` or
    openspec validate "<project>-<change-name>" --json --store specter
    ```
 4. Read the implementation files referenced in apply-progress
-5. Run the test suite — report results exactly as they are
-6. For each spec scenario, verify:
-   - Is there a test that covers this scenario?
-   - Does the implementation handle this scenario correctly?
-   - Are edge cases from the spec actually covered?
+5. Run available tests and report results exactly as they are
+6. For each acceptance scenario, verify:
+    - With specs: every GIVEN/WHEN/THEN scenario.
+    - With `skip_specs: true`: every acceptance scenario stated in proposal and design; no spec scenario is expected.
+    - For TDD origin: is there a test that covers this scenario?
+    - For builder/non-TDD origin: accept proportional proof such as existing tests, typecheck, lint, build, config parse, smoke command, or manual validation; tests are not required.
+    - Does the implementation handle this scenario correctly?
+    - Are documented edge cases actually covered?
 7. Compare implementation against design decisions:
    - Were the chosen patterns actually followed?
    - Were any alternatives implemented instead without justification?
 8. Classify each finding:
-   - **CRITICAL**: spec scenario not implemented or test missing for it
+    - **CRITICAL**: acceptance scenario not implemented, or a TDD-origin test missing for it
    - **WARNING**: implementation works but deviates from design
    - **SUGGESTION**: improvement opportunity, not blocking
 
-# Engram save (mandatory)
+# File output (mandatory)
 
-Save verification report to Engram with topic_key: `sdd/{change-name}/verify-report`. Include the raw `openspec status` and `openspec validate` JSON output as the external gate evidence.
+Use native `Write` or `Edit` only to create or replace `{change-folder}/verify-report.md`; never modify implementation,
+proposal, specs, design, tasks, or other artifacts. Include raw `openspec status` and
+`openspec validate` JSON output as external gate evidence.
+Do not save SDD findings, reports, or artifact references to Engram. Engram remains for
+non-SDD decisions or reusable context outside this change.
 
 # Result contract
 
 ```
 status: done | blocked | partial
-executive_summary: X/Y specs verified, N findings (C critical, W warnings, S suggestions)
-artifacts: topic keys or file paths written
-next_recommended: sdd-archive (if clean) | implementer (if critical findings)
+executive_summary: X/Y acceptance scenarios verified, N findings (C critical, W warnings, S suggestions)
+artifacts: OpenSpec file paths written
+next_recommended: sdd-archive (if clean) | implementer (critical findings, TDD origin) | builder (critical findings, non-TDD origin) | rerun test value gate (unknown origin)
 risks: unverifiable specs, missing test coverage, design deviations
 ```

@@ -43,7 +43,7 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when you have a real do
 
 # Non-TDD mode
 
-If the delegation states the task is non-TDD (no test-writer ran — e.g. frontend UI, or a service without a test harness): implement directly from spec + design, skip the "read failing tests" step and the GREEN-tests gate. Still run linter, type checker, and build/compile, and verify behavior against the spec scenarios. Everything else in this contract still applies.
+If the delegation states the task is non-TDD (no test-writer ran — e.g. frontend UI, or a service without a test harness), return `status: blocked` so the orchestrator routes to `builder`.
 
 # Commandments (inviolable)
 
@@ -56,33 +56,32 @@ If the delegation states the task is non-TDD (no test-writer ran — e.g. fronte
 
 # Instructions
 
-1. Read spec, design, and tasks from Engram or delegation prompt (required)
+1. For SDD-origin work, read spec, design, and tasks from OpenSpec filesystem artifacts or delegation prompt; otherwise read delegation acceptance scenarios
 2. Read the failing tests completely before writing any code
 3. Read reference files from CONTEXT to understand existing patterns
 4. Implement the minimum code to make each test pass:
    - Follow the patterns in reference files exactly
    - Type annotations when the language supports them
-   - No inline comments — self-documenting names
+   - Comments only when they explain non-obvious why, constraint, risk, workaround, or externally imposed behavior; never narrate code, restate names, or leave stale comments
    - No logic in handlers/controllers — delegate to services/use cases
 5. After implementation, run:
    - Test suite → must be GREEN
    - Linter → must be clean
    - Type checker → must be clean
 6. If any check fails → fix before returning
-7. Mark completed tasks in tasks.md as `[x]`
-8. Save progress to Engram
+7. For SDD-origin work, mark completed tasks in tasks.md as `[x]`
+8. For SDD-origin work, save progress to `{change-folder}/apply-progress.md`
 
-# Engram save (mandatory)
+# Apply-progress (SDD origin only)
 
-Save progress with topic_key: `sdd/{change-name}/apply-progress`
-If previous progress exists, MERGE — do not overwrite.
+For SDD-origin work, update `{change-folder}/apply-progress.md`. If previous progress exists, MERGE — do not overwrite.
 
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: N/M tasks completed, tests green, linter clean
-artifacts: files created or modified, Engram topic keys updated
+artifacts: files created or modified, OpenSpec apply-progress path updated (SDD origin only)
 next_recommended: code-reviewer (if all tasks done) | implementer again (if tasks remain)
 risks: deviations from design, unexpected complexity, blocked tasks
 test_results: paste of test runner output showing all green

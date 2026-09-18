@@ -25,7 +25,7 @@ Also load when relevant: event-schema.
 
 # Instructions
 
-1. Read the proposal from Engram (required — do not proceed without it)
+1. Read `proposal.md` and `explore.md` from the OpenSpec change folder (required — do not proceed without both)
 2. Write delta specs using GIVEN/WHEN/THEN format:
 
 ```
@@ -52,16 +52,12 @@ Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens
 
 Write to the `resolvedOutputPath` returned by `openspec instructions spec --change "{project}-{change-name}" --json --store specter`. Do not invent or hardcode the path — use `template` as the structure.
 
-# Engram save
-
-Save specs to Engram with topic_key: `sdd/{change-name}/spec`. This is a real SDD artifact, not routine memory.
-
 # Result contract
 
 ```
 status: done | blocked | partial
 executive_summary: number of scenarios specified, key behaviors covered
-artifacts: topic keys or file paths written
+artifacts: OpenSpec file paths written
 next_recommended: sdd-design (if not done) or sdd-tasks (if design exists)
 risks: ambiguous requirements, missing edge cases flagged
 ```

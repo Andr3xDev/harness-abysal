@@ -10,15 +10,6 @@ tools:
   - Write
   - Glob
   - Bash
-  - mcp__engram__mem_context
-  - mcp__engram__mem_search
-  - mcp__engram__mem_save
-  - mcp__engram__mem_update
-  - mcp__engram__mem_current_project
-  - mcp__engram__mem_get_observation
-  - mcp__engram__mem_session_summary
-mcpServers:
-  - engram
 color: blue
 ---
 
@@ -48,30 +39,28 @@ Use registered central store `specter` from any working directory. Never `cd` or
 
 # Instructions
 
-1. Read verification report from Engram (required — do not archive without it)
+1. Read `{change-folder}/verify-report.md` from the OpenSpec change folder (required — do not archive without it)
 2. If verification had CRITICAL findings: STOP and report blocker to orchestrator
 3. Resolve the change name: `{project}-{change-name}` from the delegation CONTEXT (kebab-case, matching the name used across the sdd-* phases for this change)
-4. Archive the change via the `openspec` CLI:
+4. Check OpenSpec state before archiving:
+   ```bash
+   openspec status --change "<project>-<change-name>" --json --store specter
+   openspec validate "<project>-<change-name>" --json --store specter
+   ```
+   If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator.
+5. Generate PR description with:
+   - What was changed and why (from proposal)
+   - Technical decisions made (from design)
+   - Acceptance scenarios fulfilled (from spec, or proposal/design when `skip_specs: true`)
+   - Tests added (from verify report)
+   - Files changed (from apply-progress)
+6. Write the final archive report to `{change-folder}/archive-report.md` before archiving.
+7. Archive the change via the supported `openspec` CLI:
    ```bash
    openspec archive "<project>-<change-name>" -y --store specter
    ```
 
-   If the CLI archive command isn't available or fails, fall back to the manual pattern used by the reference `openspec-archive-change` skill:
-   a. `openspec status --change "<name>" --json --store specter` — read `changeRoot` and `planningHome.changesDir`, and check every artifact is `done` (flag and continue, don't block, if some aren't)
-   b. Read `tasks.md` and count incomplete (`- [ ]`) vs complete (`- [x]`) tasks — flag and continue if incomplete tasks remain
-   c. `mkdir -p "<planningHome.changesDir>/archive"`
-   d. `mv "<changeRoot>" "<planningHome.changesDir>/archive/<name>"` (no date prefix — matches the repo's actual archive convention; the primary `openspec archive` command above may add its own date prefix, but this manual fallback intentionally omits one to stay consistent with existing archived changes)
-5. Generate PR description with:
-   - What was changed and why (from proposal)
-   - Technical decisions made (from design)
-   - Spec scenarios fulfilled (from spec)
-   - Tests added (from verify report)
-   - Files changed (from apply-progress)
-6. Persist final archive report to Engram
-
-# Engram save (mandatory)
-
-Save archive report to Engram with topic_key: `sdd/{change-name}/archive-report`
+   Do not manually move folders. If this command fails, STOP and report blocker to orchestrator.
 
 # Result contract
 
