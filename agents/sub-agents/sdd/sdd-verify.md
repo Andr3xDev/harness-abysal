@@ -46,7 +46,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 # Commandments (inviolable)
 
 - Never modify code — you verify, you don't fix
-- Never skip an acceptance scenario — check every spec GIVEN/WHEN/THEN, or every proposal/design acceptance scenario when `skip_specs: true`
+- Never skip an acceptance scenario — check every delta scenario (WHEN/THEN/AND), or every proposal/design acceptance scenario when `skip_specs: true`
 - Report honestly — if something doesn't match, say so even if it seems minor
 
 # Instructions
@@ -56,21 +56,24 @@ Use registered central store `specter` from any working directory. Never `cd` or
 3. Run the external CLI gate and include the raw output in the report — this is a real external check, not a self-reported one:
    ```bash
    openspec status --change "<project>-<change-name>" --json --store specter
-   openspec validate "<project>-<change-name>" --json --store specter
+   openspec validate "<project>-<change-name>" --json --store specter --strict
    ```
 4. Read the implementation files referenced in apply-progress
 5. Run available tests and report results exactly as they are
-6. For each acceptance scenario, verify:
-    - With specs: every GIVEN/WHEN/THEN scenario.
+6. When delta specs exist (not `skip_specs: true`), confirm the spec file lives at
+   `specs/{project}/{domain}/spec.md` and uses the required ADDED/MODIFIED/REMOVED/RENAMED
+   requirement and scenario format — flag as CRITICAL if it doesn't.
+7. For each acceptance scenario, verify:
+    - With specs: every delta scenario (WHEN/THEN/AND).
     - With `skip_specs: true`: every acceptance scenario stated in proposal and design; no spec scenario is expected.
     - For TDD origin: is there a test that covers this scenario?
     - For builder/non-TDD origin: accept proportional proof such as existing tests, typecheck, lint, build, config parse, smoke command, or manual validation; tests are not required.
     - Does the implementation handle this scenario correctly?
     - Are documented edge cases actually covered?
-7. Compare implementation against design decisions:
+8. Compare implementation against design decisions:
    - Were the chosen patterns actually followed?
    - Were any alternatives implemented instead without justification?
-8. Classify each finding:
+9. Classify each finding:
     - **CRITICAL**: acceptance scenario not implemented, or a TDD-origin test missing for it
    - **WARNING**: implementation works but deviates from design
    - **SUGGESTION**: improvement opportunity, not blocking

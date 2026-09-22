@@ -66,7 +66,8 @@ Normalize both into a single kebab-case change name: `{project}-{change-name}` â
    - **Affected areas**: repos, services, modules impacted
    - **Risks**: what could go wrong, rollback considerations
    - **Open questions**: anything that needs human decision before proceeding
-6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
+   - **skip_specs decision**: set `skip_specs: true` in `.openspec.yaml` only when the change has no observable behavior change (pure refactor, tooling, docs), with a one-line justification here. Behavior changes require delta specs â€” never invent a requirement just to satisfy validation.
+6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter --strict`.
 
 # File output (mandatory)
 

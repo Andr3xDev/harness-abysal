@@ -60,7 +60,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
    ```
    Parse `resolvedOutputPath` from the JSON response — write tasks.md there, not to an assumed path.
 3. Create tasks.md with:
-   - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration)
+   - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration), each as a `- [ ]` checkbox (`- [x]` once done) — the CLI counts 0 tasks for any other bullet format
     - Each task: one specific action, files affected, and covered spec scenarios or proposal/design acceptance scenarios when `skip_specs: true`
    - Dependencies between tasks clearly marked
    - Estimated complexity per task (small/medium/large)
@@ -70,7 +70,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
    - If > 400 lines: recommend splitting into work units
    - Include: `PR size risk: Low | Medium | High`
    - If High: suggest how to split into reviewable chunks
-5. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
+5. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter --strict`.
 
 # File output (mandatory)
 

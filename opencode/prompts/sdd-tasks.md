@@ -26,7 +26,7 @@ Load before work:
 
 1. Read design plus specs from the OpenSpec change folder. When `.openspec.yaml` has `skip_specs: true`, read proposal and design acceptance scenarios instead; never reference nonexistent spec scenarios.
 2. Create tasks.md with:
-   - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration)
+   - Ordered, numbered tasks grouped by phase (setup, implementation, testing, integration), each as a `- [ ]` checkbox (`- [x]` once done) — the CLI counts 0 tasks for any other bullet format
     - Each task: one specific action, files affected, and covered spec scenarios or proposal/design acceptance scenarios when `skip_specs: true`
    - Dependencies between tasks clearly marked
    - Estimated complexity per task (small/medium/large)
@@ -45,7 +45,7 @@ Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens
 
 1. Get output path and constraints: `openspec instructions tasks --change "{project}-{change-name}" --json --store specter`
    Parse `resolvedOutputPath`, `template`, `rules`, `context`, `dependencies` from the JSON. `context` and `rules` are constraints for you — never copy them into the file. Read `dependencies` (e.g. spec, design) for context before writing.
-2. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter`.
+2. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter --strict`.
 
 # File output (mandatory)
 

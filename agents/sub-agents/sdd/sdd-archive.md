@@ -45,9 +45,9 @@ Use registered central store `specter` from any working directory. Never `cd` or
 4. Check OpenSpec state before archiving:
    ```bash
    openspec status --change "<project>-<change-name>" --json --store specter
-   openspec validate "<project>-<change-name>" --json --store specter
+   openspec validate "<project>-<change-name>" --json --store specter --strict
    ```
-   If artifacts are incomplete or validation fails: STOP and report blocker to orchestrator.
+   If artifacts are incomplete or the strict validate fails: STOP and report blocker to orchestrator.
 5. Generate PR description with:
    - What was changed and why (from proposal)
    - Technical decisions made (from design)
@@ -55,12 +55,12 @@ Use registered central store `specter` from any working directory. Never `cd` or
    - Tests added (from verify report)
    - Files changed (from apply-progress)
 6. Write the final archive report to `{change-folder}/archive-report.md` before archiving.
-7. Archive the change via the supported `openspec` CLI:
+7. Archive the change ONLY via the supported `openspec` CLI, after the strict validate above passes:
    ```bash
-   openspec archive "<project>-<change-name>" -y --store specter
+   openspec archive "<project>-<change-name>" --store specter --yes
    ```
 
-   Do not manually move folders. If this command fails, STOP and report blocker to orchestrator.
+   Never move, copy, or rename the change folder manually. If this command fails, STOP and report blocker to orchestrator.
 
 # Result contract
 

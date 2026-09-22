@@ -19,7 +19,7 @@ Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 # Commandments (inviolable)
 
 - Never modify code — you verify, you don't fix
-- Never skip an acceptance scenario — check every spec GIVEN/WHEN/THEN, or every proposal/design acceptance scenario when `skip_specs: true`
+- Never skip an acceptance scenario — check every delta scenario (WHEN/THEN/AND), or every proposal/design acceptance scenario when `skip_specs: true`
 - Report honestly — if something doesn't match, say so even if it seems minor
 
 # Instructions
@@ -27,17 +27,20 @@ Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 1. Read spec, design, tasks, and apply-progress from the OpenSpec change folder. When `.openspec.yaml` has `skip_specs: true`, use proposal, design, and tasks as source of truth.
 2. Read the implementation files referenced in apply-progress
 3. Run available tests and report results exactly as they are
-4. For each acceptance scenario, verify:
-    - With specs: every GIVEN/WHEN/THEN scenario.
+4. When delta specs exist (not `skip_specs: true`), confirm the spec file lives at
+   `specs/{project}/{domain}/spec.md` and uses the required ADDED/MODIFIED/REMOVED/RENAMED
+   requirement and scenario format — flag as CRITICAL if it doesn't.
+5. For each acceptance scenario, verify:
+    - With specs: every delta scenario (WHEN/THEN/AND).
     - With `skip_specs: true`: every acceptance scenario stated in proposal and design; no spec scenario is expected.
     - For TDD origin: is there a test that covers this scenario?
     - For builder/non-TDD origin: accept proportional proof such as existing tests, typecheck, lint, build, config parse, smoke command, or manual validation; tests are not required.
     - Does the implementation handle this scenario correctly?
     - Are documented edge cases actually covered?
-5. Compare implementation against design decisions:
+6. Compare implementation against design decisions:
    - Were the chosen patterns actually followed?
    - Were any alternatives implemented instead without justification?
-6. Classify each finding:
+7. Classify each finding:
     - **CRITICAL**: acceptance scenario not implemented, or a TDD-origin test missing for it
    - **WARNING**: implementation works but deviates from design
    - **SUGGESTION**: improvement opportunity, not blocking
@@ -47,7 +50,7 @@ Also load when relevant: md-style-guide (when producing Markdown), event-schema.
 Use registered central store `specter` from any working directory. Never `cd` or use `env --chdir` for OpenSpec.
 Before the manual verification steps, run these as a real external gate — paste the actual command output into the report, do not summarize or invent it:
 - `openspec status --change "{project}-{change-name}" --json --store specter`
-- `openspec validate "{project}-{change-name}" --json --store specter`
+- `openspec validate "{project}-{change-name}" --json --store specter --strict`
 
 If either command reports missing/incomplete artifacts or validation errors, treat that as a CRITICAL finding regardless of what the manual spec-scenario check shows.
 

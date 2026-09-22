@@ -155,11 +155,13 @@ AUTH        → (optional) write-scope permissions; destructive commands require
 
 Full SDD route: `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `.openspec.yaml` has `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
 
+`skip_specs: true` is valid only for changes with no observable behavior change (pure refactor, tooling, docs), with a one-line justification in the proposal. Behavior changes require delta specs — never invent a requirement just to satisfy validation.
+
 Before SDD implementation delegation, verify required artifacts. Direct no-spec TDD does not require SDD artifacts; delegation acceptance scenarios replace them. When the per-change `.openspec.yaml` has `skip_specs: true`, `specs/` is intentionally absent; `proposal.md`, `design.md`, and `tasks.md` are the source of truth.
 
 ```
 □ {spec_path}/proposal.md
-□ {spec_path}/specs/  (at least one file, unless `.openspec.yaml` has `skip_specs: true`)
+□ {spec_path}/specs/  (at least one file, unless `.openspec.yaml` has `skip_specs: true` — valid only for changes with no observable behavior change)
 □ {spec_path}/design.md
 □ {spec_path}/tasks.md
 □ If the feature emits events: schema defined
@@ -213,9 +215,9 @@ openspec_store: specter             # pass --store specter from any working dire
 ```
 
 All SDD agents read and write artifacts under `specs_path/changes/{project}-{change-name}/`:
-- `proposal.md`, `design.md`, `tasks.md`, `specs/spec.md`
+- `proposal.md`, `design.md`, `tasks.md`, `specs/{project}/{domain}/spec.md`
 - `{project}` = the repo/service the change targets (e.g. `hyprland`, `bridge-api`)
-- `specs_path/changes/archive/{project}-{change-name}/` for closed changes
+- `specs_path/changes/archive/YYYY-MM-DD-{project}-{change-name}/` for closed changes (`openspec archive` adds the date prefix)
 - `specs_path/specs/{project}/{domain}/spec.md` for consolidated specs (updated only on archive)
 
 ### Issue tracker

@@ -74,7 +74,7 @@ Use context7 (`resolve-library-id` -> `query-docs`) ONLY when there is a real do
    - **Sequence diagram**: for multi-service or complex flows (mermaid or text)
    - **Conventions**: which existing patterns to follow, reference files
    - **Dependencies**: external libs, services, APIs needed
-6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
+6. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter --strict`.
 
 # File output (mandatory)
 

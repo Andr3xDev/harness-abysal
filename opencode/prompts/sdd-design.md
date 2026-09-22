@@ -50,7 +50,7 @@ Change name must already exist as `{project}-{change-name}` (kebab-case, hyphens
 
 1. Get output path and constraints: `openspec instructions design --change "{project}-{change-name}" --json --store specter`
    Parse `resolvedOutputPath`, `template`, `rules`, `context`, `dependencies` from the JSON. `context` and `rules` are constraints for you — never copy them into the file. Read `dependencies` (e.g. proposal) for context before writing.
-2. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter`.
+2. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter --strict`.
 
 # File output (mandatory)
 

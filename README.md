@@ -74,7 +74,7 @@ tech-orchestrator          strategist
         │                         │
         ├── sdd-propose     → proposal.md; creates change directory ◄─ strategist may also delegate here
         ├── sdd-explore     → explore.md after proposal             ◄─ strategist may also delegate here
-        ├── sdd-spec        → specs/spec.md (GIVEN/WHEN/THEN)      ◄─ strategist may also delegate here
+        ├── sdd-spec        → specs/{project}/{domain}/spec.md (ADDED/MODIFIED Requirements) ◄─ strategist may also delegate here
         ├── sdd-design      → design.md (ADR-lite)                 ◄─ strategist may also delegate here
         ├── sdd-tasks       → tasks.md (ordered, PR-size forecast)
         ├── builder         → default code/config/docs writer
@@ -105,6 +105,8 @@ distinct from the Caveman communication skill/plugin.
 Full SDD runs `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`.
 `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`.
 When `.openspec.yaml` has `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
+`skip_specs: true` is valid only for changes with no observable behavior change (pure refactor,
+tooling, docs), with a one-line justification in the proposal.
 
 Before any non-trivial delegation or change, orchestrators give a natural, contextual update with relevant detected issue, impact, planned action, affected area, validation, and real risk or blocker. They use no fixed labels or mandatory field list, omit irrelevant detail, avoid vague notices, and keep routine tiny reads/checks silent.
 
@@ -221,8 +223,8 @@ openspec/
 │   │   ├── proposal.md
 │   │   ├── design.md
 │   │   ├── tasks.md
-│   │   └── specs/spec.md
-│   └── archive/{project}-{change-name}/   # closed changes
+│   │   └── specs/{project}/{domain}/spec.md
+│   └── archive/YYYY-MM-DD-{project}-{change-name}/   # closed changes; openspec archive adds the date prefix
 └── specs/{project}/{domain}/spec.md       # consolidated, updated on archive
 ```
 

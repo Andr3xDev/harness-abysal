@@ -51,19 +51,17 @@ Use registered central store `specter` from any working directory. Never `cd` or
    ```bash
    openspec instructions spec --change "<project>-<change-name>" --json --store specter
    ```
-   Parse `resolvedOutputPath` from the JSON response — the CLI resolves the real spec path (e.g. `specs/{capability}/spec.md`), do not hardcode it yourself.
-3. Write delta specs using GIVEN/WHEN/THEN format:
-
-```
-GIVEN [context / precondition]
-WHEN  [action or event]
-THEN  [observable, verifiable result]
-```
+   Parse `resolvedOutputPath` from the JSON response — the CLI resolves the real spec path as `specs/{project}/{domain}/spec.md` (component domains get a component-name prefix, e.g. `specs/hypr-abysal/lucyna-osd/spec.md`), do not hardcode it yourself.
+3. Write delta specs in OpenSpec delta format (full rules: `common-sdd.md` § Delta spec format):
+   - Section headers: `## ADDED Requirements` / `## MODIFIED Requirements` / `## REMOVED Requirements` / `## RENAMED Requirements`
+   - `### Requirement: <name>` — body must contain SHALL or MUST
+   - `#### Scenario: <name>` (exactly 4 hashes) with `- **WHEN** ...`, `- **THEN** ...`, optional `- **AND** ...` bullets; at least 1 scenario per requirement
+   - A new capability delta opens with `## Purpose` (at least 50 chars). MODIFIED repeats the full requirement block under a matching header. REMOVED needs `**Reason**` + `**Migration**`; RENAMED uses `FROM:`/`TO:`
 
 4. Cover: happy path, error cases, edge cases, boundary conditions
 5. If the feature emits domain events: specify the event schema in the spec
 6. Each spec should map 1:1 to a testable behavior
-7. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter`.
+7. After writing, run `openspec status --change "<project>-<change-name>" --json --store specter` and `openspec validate "<project>-<change-name>" --json --store specter --strict`.
 
 # File output (mandatory)
 

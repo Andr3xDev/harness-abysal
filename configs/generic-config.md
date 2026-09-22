@@ -150,13 +150,16 @@ AUTH        → (optional) write-scope permissions; destructive commands require
 
 Full SDD route: `sdd-propose` → `sdd-explore` → `sdd-spec` → `sdd-design` → `sdd-tasks`. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `.openspec.yaml` has `skip_specs: true`, omit `sdd-spec` and run `sdd-design`.
 
+`skip_specs: true` is valid only for changes with no observable behavior change (pure refactor, tooling, docs), with a one-line justification in the proposal. Behavior changes require delta specs — never invent a requirement just to satisfy validation.
+
 Before SDD implementation delegation, read the per-change `.openspec.yaml`. If `skip_specs: true`,
 `specs/` is intentionally absent; `proposal.md`, `design.md`, and `tasks.md` are the source of
 truth, and do not delegate `sdd-spec`. Otherwise, require `specs/`. CONTEXT must state this
-exception and include `openspec validate "<change-id>" --store specter --json`.
+exception and include `openspec validate "<change-id>" --store specter --strict --json`.
 
 ```
 □ {spec_path}/proposal.md
+□ {spec_path}/specs/  (at least one file, unless `.openspec.yaml` has `skip_specs: true` — valid only for changes with no observable behavior change)
 □ {spec_path}/design.md
 □ {spec_path}/tasks.md
 □ If the feature emits events: schema defined

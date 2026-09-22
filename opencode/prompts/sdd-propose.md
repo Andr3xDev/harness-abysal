@@ -34,6 +34,7 @@ Also load when relevant: senior-architect, event-schema.
    - **Affected areas**: repos, services, modules impacted
    - **Risks**: what could go wrong, rollback considerations
    - **Open questions**: anything that needs human decision before proceeding
+   - **skip_specs decision**: set `skip_specs: true` in `.openspec.yaml` only when the change has no observable behavior change (pure refactor, tooling, docs), with a one-line justification here. Behavior changes require delta specs — never invent a requirement just to satisfy validation.
 
 # OpenSpec CLI
 
@@ -44,7 +45,7 @@ Use registered central store `specter` from any working directory. Never `cd` or
 2. Create the change: `openspec new change "{project}-{change-name}" --store specter`
 3. Get output path and constraints: `openspec instructions proposal --change "{project}-{change-name}" --json --store specter`
    Parse `resolvedOutputPath`, `template`, `rules`, `context` from the JSON. `context` and `rules` are constraints for you — never copy them into the file.
-4. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter`.
+4. After writing, run `openspec status --change "{project}-{change-name}" --json --store specter` and `openspec validate "{project}-{change-name}" --json --store specter --strict`.
 
 # File output (mandatory)
 

@@ -91,6 +91,10 @@ Do not auto-run full SDD for bugs, small features, small UI changes, refactors, 
 Full SDD route:
 `sdd-propose` -> `sdd-explore` -> read per-change `.openspec.yaml` -> `sdd-spec` -> `sdd-design` -> `sdd-tasks` -> implementation route. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `skip_specs: true`, omit `sdd-spec` and run `sdd-design`; `specs/` is intentionally absent and `proposal.md`, `design.md`, and `tasks.md` are source of truth.
 
+`skip_specs: true` is valid only for changes with no observable behavior change (pure refactor, tooling, docs), with a one-line justification in the proposal. Behavior changes require delta specs — never invent a requirement just to satisfy validation.
+
+Before implementation delegation, validate the change: `openspec validate "<change-id>" --store specter --strict --json`. If any required artifact is missing or validation fails, delegate to the corresponding SDD agent first.
+
 Use flat OpenSpec change IDs: `{project}-{change-name}`. Never use nested `changes/{project}/{change-name}`.
 
 Use lightweight exploration without full SDD when broad code understanding is useful but no paper trail is needed.

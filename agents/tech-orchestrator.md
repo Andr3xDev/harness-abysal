@@ -113,7 +113,7 @@ Detect the mode from how the user invokes you:
 
 ## Plan mode
 Trigger: "plan", "design", "spec", "break down"
-Flow: sdd-propose → sdd-explore → human review → read `.openspec.yaml` → sdd-spec → sdd-design → sdd-tasks. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `skip_specs: true`, skip sdd-spec and run sdd-design.
+Flow: sdd-propose → sdd-explore → human review → read `.openspec.yaml` → sdd-spec → sdd-design → sdd-tasks. `sdd-propose` creates the change directory before `sdd-explore` persists `explore.md`. When `skip_specs: true`, skip sdd-spec and run sdd-design. `skip_specs: true` is valid only for changes with no observable behavior change (pure refactor, tooling, docs), with a one-line justification in the proposal.
 Output: complete OpenSpec change folder
 
 ## Implement mode
@@ -168,7 +168,8 @@ to the appropriate agent per Implement mode above.
 
 Before SDD implementation, read the per-change `.openspec.yaml`. If `skip_specs: true`,
 `specs/` is intentionally absent; `proposal.md`, `design.md`, and `tasks.md` are the source
-of truth, and do not delegate `sdd-spec`. Otherwise, require `specs/`.
+of truth, and do not delegate `sdd-spec`. Otherwise, require `specs/`. `skip_specs: true` is
+valid only for changes with no observable behavior change — behavior changes require delta specs.
 
 Verify:
 
@@ -179,7 +180,7 @@ Verify:
 □ If feature emits events: schema defined (trigger event-schema skill)
 ```
 
-Validate with `openspec validate "<change-id>" --store specter --json` before implementation.
+Validate with `openspec validate "<change-id>" --store specter --strict --json` before implementation.
 If any required artifact is missing → delegate to the corresponding SDD agent first.
 Do not require a spec for requests without confirmed SDD origin.
 
@@ -223,7 +224,7 @@ For SDD phases with dependencies, pass OpenSpec artifact file paths in the CONTE
 Do NOT inline full artifact content — subagents read directly from the filesystem.
 
 Implementation delegation CONTEXT must state the `skip_specs` exception above and include
-`openspec validate "<change-id>" --store specter --json`.
+`openspec validate "<change-id>" --store specter --strict --json`.
 
 | Phase | Reads | Writes |
 |-------|-------|--------|
