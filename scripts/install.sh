@@ -165,7 +165,7 @@ install_dir "$ROOT/agents" "$HOME/.claude/agents"
 install_dir "$ROOT/commands" "$HOME/.claude/commands"
 install_dir "$ROOT/skills" "$HOME/.claude/skills"
 install_dir "$ROOT/hooks" "$HOME/.claude/hooks"
-install_dir "$ROOT/sounds" "$HOME/.claude/sounds"
+install_dir "$ROOT/opencode/sounds" "$HOME/.claude/sounds"
 chmod +x "$HOME/.claude/hooks"/*.sh 2>/dev/null || true
 install_file "$ROOT/configs/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 install_file "$ROOT/configs/claude-settings.json" "$HOME/.claude/settings.json"
@@ -200,6 +200,12 @@ tar \
   --exclude='./logs' \
   -C "$ROOT/opencode" -cf - . | tar -C "$HOME/.config/opencode" -xf -
 
+# node_modules is excluded from the tar deploy; refresh it so the V2 shims
+# resolve @opencode/plugin and the notifier package from the config dir.
+if command -v npm >/dev/null 2>&1; then
+  (cd "$HOME/.config/opencode" && npm install --no-audit --no-fund)
+fi
+
 if [ -t 0 ]; then
   read -r -p "Register OpenSpec store 'specter' from /home/andrex/dev/specter? [y/N] " register_store
   case "$register_store" in
@@ -212,9 +218,20 @@ trap 'rm -rf -- "$caveman_dir"' EXIT
 git clone --depth 1 --branch main https://github.com/JuliusBrussee/caveman.git "$caveman_dir"
 (
   cd "$caveman_dir"
-  node bin/install.js --only claude --only opencode
+  # opencode side comes from the repo mirror (V2-ported plugin);
+  # upstream caveman installer is V1-only and would clobber the port.
+  node bin/install.js --only claude
 )
 remove_cavecrew_assets
+
+# The long-running opencode service caches its plugin module graph; without a
+# restart it fails to resolve freshly npm-installed packages for local plugins.
+if [ -t 0 ]; then
+  read -r -p "Restart the opencode service now? (disconnects active sessions) [y/N] " restart_service
+  case "$restart_service" in
+    [Yy]|[Yy][Ee][Ss]) opencode service restart ;;
+  esac
+fi
 
 echo "installed code-agents config"
 echo "next: set GITHUB_TOKEN, authenticate Linear/Claude connectors, ensure ~/.local/bin is in PATH, then run: claude doctor && opencode debug config"

@@ -6,6 +6,7 @@ opencode/sessions/
 opencode/cache/
 opencode/logs/
 opencode/opencode-notifier-state.json
+opencode/opencode-notifier.resolved.json
 
 # Claude runtime/cache if accidentally copied here
 projects/

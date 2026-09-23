@@ -1,6 +1,6 @@
 {
   "sounds": {
-    "permission": "/home/andrex/.claude/sounds/permission.wav",
-    "complete": "/home/andrex/.claude/sounds/complete.wav"
+    "permission": "./sounds/permission.wav",
+    "complete": "./sounds/complete.wav"
   }
 }

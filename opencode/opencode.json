@@ -1,1232 +1,5585 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "@dietrichgebert/ponytail",
-    "@mohak34/opencode-notifier"
+  "plugins": [
+    "./plugins/ponytail",
+    "./plugins/notifier",
+    "./plugins/caveman"
   ],
   "default_agent": "orchestrator",
-  "agent": {
+  "agents": {
     "orchestrator": {
       "mode": "primary",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/orchestrator.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/orchestrator.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "allow",
-        "task": "allow",
-        "question": "allow",
-        "github_*": "allow",
-        "linear-server_*": "allow",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "strategist": {
       "mode": "primary",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/strategist.md}",
-      "permission": {
-        "bash": "deny",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "allow",
-        "task": "allow",
-        "question": "allow",
-        "github_*": "allow",
-        "linear-server_*": "allow",
-        "context7_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+      "system": "{file:./prompts/strategist.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-explore": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-explore.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec context*": "allow",
-          "openspec doctor*": "allow",
-          "openspec list*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-explore.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "allow",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec context*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec doctor*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-propose": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-propose.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec show*": "allow",
-          "openspec new*": "allow",
-          "openspec instructions*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-propose.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec new*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec instructions*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-spec": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-spec.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec show*": "allow",
-          "openspec new*": "allow",
-          "openspec instructions*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-spec.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec new*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec instructions*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-design": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-design.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec show*": "allow",
-          "openspec new*": "allow",
-          "openspec instructions*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-design.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec new*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec instructions*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-tasks": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-tasks.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec show*": "allow",
-          "openspec new*": "allow",
-          "openspec instructions*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-tasks.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec new*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec instructions*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-verify": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-verify.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "*&&*": "deny",
-          "*;*": "deny",
-          "*|*": "deny",
-          "*>*": "deny",
-          "*<*": "deny",
-          "*$(*": "deny",
-          "*`*": "deny",
-          "*\n*": "deny",
-          "npm test*": "allow",
-          "npm run test*": "allow",
-          "npm run lint*": "allow",
-          "npm run typecheck*": "allow",
-          "npm run format-check*": "allow",
-          "npm run format:check*": "allow",
-          "npm run build*": "allow",
-          "yarn test*": "allow",
-          "yarn lint*": "allow",
-          "yarn run test*": "allow",
-          "yarn run lint*": "allow",
-          "yarn run typecheck*": "allow",
-          "yarn run format-check*": "allow",
-          "yarn run format:check*": "allow",
-          "yarn run build*": "allow",
-          "pnpm test*": "allow",
-          "pnpm lint*": "allow",
-          "pnpm run test*": "allow",
-          "pnpm run lint*": "allow",
-          "pnpm run typecheck*": "allow",
-          "pnpm run format-check*": "allow",
-          "pnpm run format:check*": "allow",
-          "pnpm run build*": "allow",
-          "bun test*": "allow",
-          "bun run test*": "allow",
-          "bun run lint*": "allow",
-          "bun run typecheck*": "allow",
-          "bun run format-check*": "allow",
-          "bun run format:check*": "allow",
-          "bun run build*": "allow",
-          "tsc": "allow",
-          "tsc *": "allow",
-          "prettier --check*": "allow",
-          "pytest*": "allow",
-          "python -m pytest*": "allow",
-          "go test*": "allow",
-          "go vet*": "allow",
-          "cargo test*": "allow",
-          "cargo clippy*": "allow",
-          "ruff check*": "allow",
-          "eslint*": "allow",
-          "flake8*": "allow",
-          "mypy*": "allow",
-          "pyright*": "allow",
-          "pip check*": "allow",
-          "poetry run pytest*": "allow",
-          "poetry run ruff check*": "allow",
-          "poetry run mypy*": "allow",
-          "poetry run pyright*": "allow",
-          "poetry run flake8*": "allow",
-          "poetry run python -m compileall*": "allow",
-          "python -m compileall*": "allow",
-          "uv run pytest*": "allow",
-          "uv run ruff check*": "allow",
-          "uv run mypy*": "allow",
-          "uv run pyright*": "allow",
-          "rubocop*": "allow",
-          "bundle exec rspec*": "allow",
-          "bundle exec rubocop*": "allow",
-          "rake test*": "allow",
-          "ruby -c*": "allow",
-          "mvn test*": "allow",
-          "mvn verify*": "allow",
-          "mvn compile*": "allow",
-          "mvn checkstyle*": "allow",
-          "gradle test*": "allow",
-          "gradle check*": "allow",
-          "gradle compile*": "allow",
-          "gradle lint*": "allow",
-          "go build*": "allow",
-          "gofmt -d*": "allow",
-          "staticcheck*": "allow",
-          "cargo check*": "allow",
-          "cargo fmt --check*": "allow",
-          "cargo build*": "allow",
-          "dotnet test*": "allow",
-          "dotnet build*": "allow",
-          "dotnet format --verify-no-changes*": "allow",
-          "composer test*": "allow",
-          "phpunit*": "allow",
-          "phpstan*": "allow",
-          "phpcs*": "allow",
-          "php -l*": "allow",
-          "make test*": "allow",
-          "make lint*": "allow",
-          "make check*": "allow",
-          "make format-check*": "allow",
-          "make typecheck*": "allow",
-          "make compile*": "allow",
-          "make build*": "allow",
-          "npm run *fix*": "deny",
-          "pnpm run *fix*": "deny",
-          "yarn run *fix*": "deny",
-          "bun run *fix*": "deny",
-          "eslint *--fix*": "deny",
-          "ruff format*": "deny",
-          "ruff check *--fix*": "deny",
-          "uv run ruff format*": "deny",
-          "uv run ruff check *--fix*": "deny",
-          "poetry run ruff format*": "deny",
-          "poetry run ruff check *--fix*": "deny",
-          "cargo clippy *--fix*": "deny",
-          "rubocop *-A*": "deny",
-          "rubocop *-a*": "deny",
-          "rubocop *--autocorrect*": "deny",
-          "bundle exec rubocop *-A*": "deny",
-          "bundle exec rubocop *-a*": "deny",
-          "bundle exec rubocop *--autocorrect*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec store list*": "allow",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git branch --list*": "allow",
-          "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-verify.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "*&&*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*;*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*|*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*>*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*<*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*$(*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*`*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*\n*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "npm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "prettier --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go vet*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pip check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rspec*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rake test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruby -c*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn verify*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn checkstyle*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gofmt -d*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "staticcheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo fmt --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet format --verify-no-changes*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "composer test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpunit*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpstan*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpcs*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "php -l*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git branch --list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "sdd-archive": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/sdd-archive.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "openspec status*": "allow",
-          "openspec validate*": "allow",
-          "openspec archive*": "allow",
-          "openspec show*": "allow",
-          "openspec instructions*": "allow",
-          "openspec store list*": "allow",
-          "git *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/sdd-archive.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "deny",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "openspec status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec validate*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec archive*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec instructions*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "openspec store list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "test-writer": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/test-writer.md}",
-      "permission": {
-        "bash": {
-          "*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "rm *": "ask",
-          "find * -delete*": "ask",
-          "bash -c *": "ask",
-          "sh -c *": "ask",
-          "* >*": "ask",
-          "truncate *": "ask",
-          "*xargs rm*": "ask",
-          "shred *": "ask",
-          "wipefs *": "ask",
-          "dd *": "ask",
-          "mkfs *": "ask",
-          "git reset --hard*": "ask",
-          "psql *": "ask",
-          "mysql *": "ask",
-          "sqlite3 *": "ask"
+      "system": "{file:./prompts/test-writer.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "allow"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rm *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "find * -delete*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "bash -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sh -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "* >*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "truncate *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "*xargs rm*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "shred *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "wipefs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "dd *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mkfs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "psql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mysql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sqlite3 *",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "builder": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/builder.md}",
-      "permission": {
-        "bash": {
-          "*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "rm *": "ask",
-          "find * -delete*": "ask",
-          "bash -c *": "ask",
-          "sh -c *": "ask",
-          "* >*": "ask",
-          "truncate *": "ask",
-          "*xargs rm*": "ask",
-          "shred *": "ask",
-          "wipefs *": "ask",
-          "dd *": "ask",
-          "mkfs *": "ask",
-          "git reset --hard*": "ask",
-          "psql *": "ask",
-          "mysql *": "ask",
-          "sqlite3 *": "ask"
+      "system": "{file:./prompts/builder.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "allow"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rm *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "find * -delete*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "bash -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sh -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "* >*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "truncate *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "*xargs rm*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "shred *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "wipefs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "dd *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mkfs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "psql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mysql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sqlite3 *",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "implementer": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/implementer.md}",
-      "permission": {
-        "bash": {
-          "*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "rm *": "ask",
-          "find * -delete*": "ask",
-          "bash -c *": "ask",
-          "sh -c *": "ask",
-          "* >*": "ask",
-          "truncate *": "ask",
-          "*xargs rm*": "ask",
-          "shred *": "ask",
-          "wipefs *": "ask",
-          "dd *": "ask",
-          "mkfs *": "ask",
-          "git reset --hard*": "ask",
-          "psql *": "ask",
-          "mysql *": "ask",
-          "sqlite3 *": "ask"
+      "system": "{file:./prompts/implementer.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "allow"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "engram_*": "allow",
-        "codegraph_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rm *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "find * -delete*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "bash -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sh -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "* >*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "truncate *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "*xargs rm*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "shred *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "wipefs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "dd *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mkfs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "psql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mysql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sqlite3 *",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "code-reviewer": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/code-reviewer.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "*&&*": "deny",
-          "*;*": "deny",
-          "*|*": "deny",
-          "*>*": "deny",
-          "*<*": "deny",
-          "*$(*": "deny",
-          "*`*": "deny",
-          "*\n*": "deny",
-          "npm test*": "allow",
-          "npm run test*": "allow",
-          "npm run lint*": "allow",
-          "npm run typecheck*": "allow",
-          "npm run format-check*": "allow",
-          "npm run format:check*": "allow",
-          "npm run build*": "allow",
-          "yarn test*": "allow",
-          "yarn lint*": "allow",
-          "yarn run test*": "allow",
-          "yarn run lint*": "allow",
-          "yarn run typecheck*": "allow",
-          "yarn run format-check*": "allow",
-          "yarn run format:check*": "allow",
-          "yarn run build*": "allow",
-          "pnpm test*": "allow",
-          "pnpm lint*": "allow",
-          "pnpm run test*": "allow",
-          "pnpm run lint*": "allow",
-          "pnpm run typecheck*": "allow",
-          "pnpm run format-check*": "allow",
-          "pnpm run format:check*": "allow",
-          "pnpm run build*": "allow",
-          "bun test*": "allow",
-          "bun run test*": "allow",
-          "bun run lint*": "allow",
-          "bun run typecheck*": "allow",
-          "bun run format-check*": "allow",
-          "bun run format:check*": "allow",
-          "bun run build*": "allow",
-          "tsc": "allow",
-          "tsc *": "allow",
-          "prettier --check*": "allow",
-          "pytest*": "allow",
-          "python -m pytest*": "allow",
-          "go test*": "allow",
-          "go vet*": "allow",
-          "cargo test*": "allow",
-          "cargo clippy*": "allow",
-          "ruff check*": "allow",
-          "eslint*": "allow",
-          "flake8*": "allow",
-          "mypy*": "allow",
-          "pyright*": "allow",
-          "pip check*": "allow",
-          "poetry run pytest*": "allow",
-          "poetry run ruff check*": "allow",
-          "poetry run mypy*": "allow",
-          "poetry run pyright*": "allow",
-          "poetry run flake8*": "allow",
-          "poetry run python -m compileall*": "allow",
-          "python -m compileall*": "allow",
-          "uv run pytest*": "allow",
-          "uv run ruff check*": "allow",
-          "uv run mypy*": "allow",
-          "uv run pyright*": "allow",
-          "rubocop*": "allow",
-          "bundle exec rspec*": "allow",
-          "bundle exec rubocop*": "allow",
-          "rake test*": "allow",
-          "ruby -c*": "allow",
-          "mvn test*": "allow",
-          "mvn verify*": "allow",
-          "mvn compile*": "allow",
-          "mvn checkstyle*": "allow",
-          "gradle test*": "allow",
-          "gradle check*": "allow",
-          "gradle compile*": "allow",
-          "gradle lint*": "allow",
-          "go build*": "allow",
-          "gofmt -d*": "allow",
-          "staticcheck*": "allow",
-          "cargo check*": "allow",
-          "cargo fmt --check*": "allow",
-          "cargo build*": "allow",
-          "dotnet test*": "allow",
-          "dotnet build*": "allow",
-          "dotnet format --verify-no-changes*": "allow",
-          "composer test*": "allow",
-          "phpunit*": "allow",
-          "phpstan*": "allow",
-          "phpcs*": "allow",
-          "php -l*": "allow",
-          "make test*": "allow",
-          "make lint*": "allow",
-          "make check*": "allow",
-          "make format-check*": "allow",
-          "make typecheck*": "allow",
-          "make compile*": "allow",
-          "make build*": "allow",
-          "npm run *fix*": "deny",
-          "pnpm run *fix*": "deny",
-          "yarn run *fix*": "deny",
-          "bun run *fix*": "deny",
-          "eslint *--fix*": "deny",
-          "ruff format*": "deny",
-          "ruff check *--fix*": "deny",
-          "uv run ruff format*": "deny",
-          "uv run ruff check *--fix*": "deny",
-          "poetry run ruff format*": "deny",
-          "poetry run ruff check *--fix*": "deny",
-          "cargo clippy *--fix*": "deny",
-          "rubocop *-A*": "deny",
-          "rubocop *-a*": "deny",
-          "rubocop *--autocorrect*": "deny",
-          "bundle exec rubocop *-A*": "deny",
-          "bundle exec rubocop *-a*": "deny",
-          "bundle exec rubocop *--autocorrect*": "deny",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git branch --list*": "allow",
-          "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/code-reviewer.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "codegraph_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "*&&*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*;*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*|*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*>*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*<*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*$(*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*`*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*\n*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "npm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "prettier --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go vet*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pip check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rspec*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rake test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruby -c*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn verify*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn checkstyle*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gofmt -d*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "staticcheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo fmt --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet format --verify-no-changes*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "composer test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpunit*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpstan*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpcs*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "php -l*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git branch --list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "judge-a": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/judge-a.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "*&&*": "deny", "*;*": "deny", "*|*": "deny", "*>*": "deny", "*<*": "deny", "*$(*": "deny", "*`*": "deny", "*\n*": "deny",
-          "npm test*": "allow", "npm run test*": "allow", "npm run lint*": "allow", "npm run typecheck*": "allow", "npm run format-check*": "allow", "npm run format:check*": "allow", "npm run build*": "allow",
-          "pnpm test*": "allow", "pnpm run test*": "allow", "pnpm run lint*": "allow", "pnpm run typecheck*": "allow", "pnpm run format-check*": "allow", "pnpm run format:check*": "allow", "pnpm run build*": "allow",
-          "yarn test*": "allow", "yarn run test*": "allow", "yarn run lint*": "allow", "yarn run typecheck*": "allow", "yarn run format-check*": "allow", "yarn run format:check*": "allow", "yarn run build*": "allow",
-          "bun test*": "allow", "bun run test*": "allow", "bun run lint*": "allow", "bun run typecheck*": "allow", "bun run format-check*": "allow", "bun run format:check*": "allow", "bun run build*": "allow",
-          "tsc": "allow", "tsc *": "allow", "prettier --check*": "allow", "eslint*": "allow",
-          "uv run pytest*": "allow", "uv run ruff check*": "allow", "uv run mypy*": "allow", "uv run pyright*": "allow",
-          "pytest*": "allow", "python -m pytest*": "allow", "ruff check*": "allow", "mypy*": "allow", "pyright*": "allow", "flake8*": "allow", "pip check*": "allow",
-          "poetry run pytest*": "allow", "poetry run ruff check*": "allow", "poetry run mypy*": "allow", "poetry run pyright*": "allow", "poetry run flake8*": "allow", "poetry run python -m compileall*": "allow", "python -m compileall*": "allow",
-          "mvn test*": "allow", "mvn verify*": "allow", "mvn compile*": "allow", "mvn checkstyle*": "allow", "gradle test*": "allow", "gradle check*": "allow", "gradle compile*": "allow", "gradle lint*": "allow",
-          "go test*": "allow", "go vet*": "allow", "go build*": "allow", "gofmt -d*": "allow", "staticcheck*": "allow",
-          "cargo test*": "allow", "cargo check*": "allow", "cargo clippy*": "allow", "cargo fmt --check*": "allow", "cargo build*": "allow",
-          "dotnet test*": "allow", "dotnet build*": "allow", "dotnet format --verify-no-changes*": "allow",
-          "bundle exec rspec*": "allow", "bundle exec rubocop*": "allow", "rake test*": "allow", "ruby -c*": "allow", "rubocop*": "allow",
-          "composer test*": "allow", "phpunit*": "allow", "phpstan*": "allow", "phpcs*": "allow", "php -l*": "allow",
-          "make test*": "allow", "make lint*": "allow", "make check*": "allow", "make format-check*": "allow", "make typecheck*": "allow", "make compile*": "allow", "make build*": "allow",
-          "npm run *fix*": "deny", "pnpm run *fix*": "deny", "yarn run *fix*": "deny", "bun run *fix*": "deny",
-          "eslint *--fix*": "deny", "ruff format*": "deny", "ruff check *--fix*": "deny", "uv run ruff format*": "deny", "uv run ruff check *--fix*": "deny", "poetry run ruff format*": "deny", "poetry run ruff check *--fix*": "deny", "cargo clippy *--fix*": "deny",
-          "rubocop *-A*": "deny", "rubocop *-a*": "deny", "rubocop *--autocorrect*": "deny", "bundle exec rubocop *-A*": "deny", "bundle exec rubocop *-a*": "deny", "bundle exec rubocop *--autocorrect*": "deny",
-          "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git branch --list*": "allow", "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/judge-a.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "*&&*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*;*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*|*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*>*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*<*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*$(*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*`*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*\n*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "npm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "prettier --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pip check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn verify*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn checkstyle*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go vet*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gofmt -d*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "staticcheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo fmt --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet format --verify-no-changes*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rspec*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rake test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruby -c*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "composer test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpunit*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpstan*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpcs*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "php -l*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git branch --list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "judge-b": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/judge-b.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "*&&*": "deny", "*;*": "deny", "*|*": "deny", "*>*": "deny", "*<*": "deny", "*$(*": "deny", "*`*": "deny", "*\n*": "deny",
-          "npm test*": "allow", "npm run test*": "allow", "npm run lint*": "allow", "npm run typecheck*": "allow", "npm run format-check*": "allow", "npm run format:check*": "allow", "npm run build*": "allow",
-          "pnpm test*": "allow", "pnpm run test*": "allow", "pnpm run lint*": "allow", "pnpm run typecheck*": "allow", "pnpm run format-check*": "allow", "pnpm run format:check*": "allow", "pnpm run build*": "allow",
-          "yarn test*": "allow", "yarn run test*": "allow", "yarn run lint*": "allow", "yarn run typecheck*": "allow", "yarn run format-check*": "allow", "yarn run format:check*": "allow", "yarn run build*": "allow",
-          "bun test*": "allow", "bun run test*": "allow", "bun run lint*": "allow", "bun run typecheck*": "allow", "bun run format-check*": "allow", "bun run format:check*": "allow", "bun run build*": "allow",
-          "tsc": "allow", "tsc *": "allow", "prettier --check*": "allow", "eslint*": "allow",
-          "uv run pytest*": "allow", "uv run ruff check*": "allow", "uv run mypy*": "allow", "uv run pyright*": "allow",
-          "pytest*": "allow", "python -m pytest*": "allow", "ruff check*": "allow", "mypy*": "allow", "pyright*": "allow", "flake8*": "allow", "pip check*": "allow",
-          "poetry run pytest*": "allow", "poetry run ruff check*": "allow", "poetry run mypy*": "allow", "poetry run pyright*": "allow", "poetry run flake8*": "allow", "poetry run python -m compileall*": "allow", "python -m compileall*": "allow",
-          "mvn test*": "allow", "mvn verify*": "allow", "mvn compile*": "allow", "mvn checkstyle*": "allow", "gradle test*": "allow", "gradle check*": "allow", "gradle compile*": "allow", "gradle lint*": "allow",
-          "go test*": "allow", "go vet*": "allow", "go build*": "allow", "gofmt -d*": "allow", "staticcheck*": "allow",
-          "cargo test*": "allow", "cargo check*": "allow", "cargo clippy*": "allow", "cargo fmt --check*": "allow", "cargo build*": "allow",
-          "dotnet test*": "allow", "dotnet build*": "allow", "dotnet format --verify-no-changes*": "allow",
-          "bundle exec rspec*": "allow", "bundle exec rubocop*": "allow", "rake test*": "allow", "ruby -c*": "allow", "rubocop*": "allow",
-          "composer test*": "allow", "phpunit*": "allow", "phpstan*": "allow", "phpcs*": "allow", "php -l*": "allow",
-          "make test*": "allow", "make lint*": "allow", "make check*": "allow", "make format-check*": "allow", "make typecheck*": "allow", "make compile*": "allow", "make build*": "allow",
-          "npm run *fix*": "deny", "pnpm run *fix*": "deny", "yarn run *fix*": "deny", "bun run *fix*": "deny",
-          "eslint *--fix*": "deny", "ruff format*": "deny", "ruff check *--fix*": "deny", "uv run ruff format*": "deny", "uv run ruff check *--fix*": "deny", "poetry run ruff format*": "deny", "poetry run ruff check *--fix*": "deny", "cargo clippy *--fix*": "deny",
-          "rubocop *-A*": "deny", "rubocop *-a*": "deny", "rubocop *--autocorrect*": "deny", "bundle exec rubocop *-A*": "deny", "bundle exec rubocop *-a*": "deny", "bundle exec rubocop *--autocorrect*": "deny",
-          "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git branch --list*": "allow", "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/judge-b.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "*&&*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*;*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*|*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*>*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*<*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*$(*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*`*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*\n*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "npm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run format:check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "tsc *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "prettier --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pip check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pytest*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run mypy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run pyright*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run flake8*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "python -m compileall*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn verify*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "mvn checkstyle*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gradle lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go vet*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "go build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gofmt -d*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "staticcheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo fmt --check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "dotnet format --verify-no-changes*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rspec*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rake test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ruby -c*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "composer test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpunit*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpstan*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "phpcs*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "php -l*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make test*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make lint*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make format-check*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make typecheck*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make compile*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "make build*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "pnpm run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "yarn run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bun run *fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "eslint *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "uv run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff format*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "poetry run ruff check *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "cargo clippy *--fix*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-A*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *-a*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "bundle exec rubocop *--autocorrect*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git branch --list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "debugger": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/debugger.md}",
-      "permission": {
-        "bash": {
-          "*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "rm *": "ask",
-          "find * -delete*": "ask",
-          "bash -c *": "ask",
-          "sh -c *": "ask",
-          "* >*": "ask",
-          "truncate *": "ask",
-          "*xargs rm*": "ask",
-          "shred *": "ask",
-          "wipefs *": "ask",
-          "dd *": "ask",
-          "mkfs *": "ask",
-          "git reset --hard*": "ask",
-          "psql *": "ask",
-          "mysql *": "ask",
-          "sqlite3 *": "ask"
+      "system": "{file:./prompts/debugger.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "allow"
         },
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "rm *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "find * -delete*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "bash -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sh -c *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "* >*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "truncate *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "*xargs rm*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "shred *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "wipefs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "dd *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mkfs *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "psql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "mysql *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "sqlite3 *",
+          "effect": "ask"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "aws": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/infrastructure/aws.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "aws logs describe-*": "allow",
-          "aws logs filter-log-events *": "allow",
-          "aws logs get-log-events *": "allow",
-          "aws logs start-query *": "allow",
-          "aws logs get-query-results *": "allow",
-          "aws dynamodb describe-*": "allow",
-          "aws dynamodb list-*": "allow",
-          "aws dynamodb get-item *": "allow",
-          "aws dynamodb query *": "allow",
-          "aws dynamodb scan *": "allow",
-          "aws lambda get-*": "allow",
-          "aws lambda list-*": "allow",
-          "aws ecs describe-*": "allow",
-          "aws ecs list-*": "allow",
-          "aws ec2 describe-*": "allow",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/infrastructure/aws.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "deny",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "deny",
-        "grep": "deny",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "aws logs describe-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws logs filter-log-events *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws logs get-log-events *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws logs start-query *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws logs get-query-results *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws dynamodb describe-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws dynamodb list-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws dynamodb get-item *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws dynamodb query *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws dynamodb scan *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws lambda get-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws lambda list-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws ecs describe-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws ecs list-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "aws ec2 describe-*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "log-reader": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/infrastructure/log-reader.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "rg *": "allow",
-          "wc *": "allow",
-          "du *": "allow",
-          "ls *": "allow",
-          "zcat *": "allow",
-          "gzip -cd *": "allow",
-          "journalctl *": "allow",
-          "docker logs *": "allow",
-          "kubectl logs *": "allow",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/infrastructure/log-reader.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "allow",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "rg *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "wc *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "du *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ls *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "zcat *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "gzip -cd *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "journalctl *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "docker logs *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "kubectl logs *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "codegraph-maintainer": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/infrastructure/codegraph-maintainer.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "codegraph status*": "allow",
-          "codegraph query*": "allow",
-          "codegraph explore*": "allow",
-          "codegraph files*": "allow",
-          "codegraph node*": "allow",
-          "codegraph callers*": "allow",
-          "codegraph callees*": "allow",
-          "codegraph impact*": "allow",
-          "codegraph affected*": "allow",
-          "codegraph unlock*": "ask",
-          "codegraph init*": "ask",
-          "codegraph sync*": "ask",
-          "codegraph index*": "ask",
-          "codegraph-health*": "ask",
-          "scripts/codegraph-health.sh*": "ask",
-          "./scripts/codegraph-health.sh*": "ask",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git blame*": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/infrastructure/codegraph-maintainer.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "allow",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "codegraph status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph query*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph explore*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph files*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph node*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph callers*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph callees*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph impact*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph affected*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph unlock*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph init*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph sync*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph index*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "codegraph-health*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "scripts/codegraph-health.sh*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "./scripts/codegraph-health.sh*",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git blame*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "engram-maintainer": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/infrastructure/engram-maintainer.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "engram context*": "allow",
-          "engram search*": "allow",
-          "engram stats*": "allow",
-          "engram projects list*": "allow",
-          "engram doctor*": "allow",
-          "engram timeline*": "allow",
-          "engram delete *": "ask",
-          "engram export *": "ask"
+      "system": "{file:./prompts/infrastructure/engram-maintainer.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "deny",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "deny",
-        "grep": "deny",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "deny",
-        "codegraph_*": "deny",
-        "engram_*": "deny",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "engram context*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram search*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram stats*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram projects list*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram doctor*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram timeline*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "engram delete *",
+          "effect": "ask"
+        },
+        {
+          "action": "shell",
+          "resource": "engram export *",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "echor-onboarder": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/echor/echor-onboarder.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git rev-parse*": "allow",
-          "ls *": "allow",
-          "rg *": "allow",
-          "cat *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/echor/echor-onboarder.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "allow",
-        "edit": "allow",
-        "write": "allow",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "deny",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git rev-parse*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ls *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rg *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cat *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "echor-updater": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/echor/echor-updater.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git rev-parse*": "allow",
-          "ls *": "allow",
-          "rg *": "allow",
-          "cat *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/echor/echor-updater.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "allow",
-        "edit": "allow",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "deny",
-        "codegraph_*": "deny",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git rev-parse*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ls *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rg *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cat *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "echor-consultador": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/echor/echor-consultador.md}",
-      "permission": {
-        "bash": "deny",
-        "read": "allow",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "deny",
-        "codegraph_*": "deny",
-        "engram_*": "deny",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+      "system": "{file:./prompts/echor/echor-consultador.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     },
     "echor-validator": {
       "mode": "subagent",
       "model": "opencode-go/glm-5.3-flash",
-      "prompt": "{file:./prompts/echor/echor-validator.md}",
-      "permission": {
-        "bash": {
-          "*": "deny",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git rev-parse*": "allow",
-          "ls *": "allow",
-          "rg *": "allow",
-          "cat *": "allow",
-          "git commit*": "deny",
-          "git push*": "deny",
-          "git reset --hard*": "ask"
+      "system": "{file:./prompts/echor/echor-validator.md}",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "deny"
         },
-        "read": "allow",
-        "edit": "deny",
-        "write": "deny",
-        "glob": "allow",
-        "grep": "allow",
-        "webfetch": "deny",
-        "task": "deny",
-        "question": "deny",
-        "github_*": "deny",
-        "linear-server_*": "deny",
-        "context7_*": "deny",
-        "codegraph_*": "allow",
-        "engram_*": "allow",
-        "filesystem_*": "deny"
-      },
-      "options": {
-        "reasoningEffort": "medium"
+        {
+          "action": "shell",
+          "resource": "git status*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git show*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git rev-parse*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "ls *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rg *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "cat *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git commit*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git push*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard*",
+          "effect": "ask"
+        },
+        {
+          "action": "read",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "glob",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "grep",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "webfetch",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "subagent",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "question",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "github_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "linear-server_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "context7_*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "codegraph_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "engram_*",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "filesystem_*",
+          "resource": "*",
+          "effect": "deny"
+        }
+      ],
+      "request": {
+        "body": {
+          "reasoningEffort": "medium"
+        }
       }
     }
   },
+  "permissions": [
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/dev/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/laburo/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/university/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/.config/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/.claude/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/home/andrex/.cache/opencode/packages/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    }
+  ],
   "mcp": {
-    "context7": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "enabled": true
-    },
-    "codegraph": {
-      "type": "local",
-      "command": [
-        "codegraph",
-        "serve",
-        "--mcp"
-      ],
-      "enabled": true
-    },
-    "engram": {
-      "command": [
-        "/usr/bin/engram",
-        "mcp",
-        "--tools=agent"
-      ],
-      "enabled": true,
-      "type": "local"
-    },
-    "filesystem": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home/andrex/dev/",
-        "/home/andrex/laburo/"
-      ],
-      "enabled": true
-    },
-    "github": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "environment": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_TOKEN}"
+    "servers": {
+      "context7": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@upstash/context7-mcp"
+        ],
+        "disabled": false
       },
-      "enabled": true
-    },
-    "linear-server": {
-      "type": "remote",
-      "url": "https://mcp.linear.app/mcp",
-      "enabled": true
+      "codegraph": {
+        "type": "local",
+        "command": [
+          "codegraph",
+          "serve",
+          "--mcp"
+        ],
+        "disabled": false
+      },
+      "engram": {
+        "command": [
+          "/usr/bin/engram",
+          "mcp",
+          "--tools=agent"
+        ],
+        "type": "local",
+        "disabled": false
+      },
+      "filesystem": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "/home/andrex/dev/",
+          "/home/andrex/laburo/"
+        ],
+        "disabled": false
+      },
+      "github": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@modelcontextprotocol/server-github"
+        ],
+        "environment": {
+          "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_TOKEN}"
+        },
+        "disabled": false
+      },
+      "linear-server": {
+        "type": "remote",
+        "url": "https://mcp.linear.app/mcp",
+        "disabled": false
+      }
     }
   },
-  "permission": {
-    "external_directory": {
-      "/home/andrex/dev/**": "allow",
-      "/home/andrex/laburo/**": "allow",
-      "/home/andrex/university/**": "allow",
-      "/home/andrex/.config/**": "allow",
-      "/home/andrex/.claude/**": "allow",
-      "/home/andrex/.cache/opencode/packages/**": "allow",
-      "*": "ask"
-    }
-  },
-  "provider": {
+  "providers": {
     "openai": {
-      "options": {
+      "settings": {
         "baseURL": "http://127.0.0.1:8787/w/opencode/openai/v1"
       }
     },
     "anthropic": {
-      "options": {
+      "settings": {
         "baseURL": "http://127.0.0.1:8787/w/opencode/anthropic/v1"
       }
     }

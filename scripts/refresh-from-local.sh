@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUPS="$ROOT/.refresh-backups"
-MANAGED_DIRS=(agents commands skills hooks opencode sounds)
+MANAGED_DIRS=(agents commands skills hooks opencode)
 MANAGED_FILES=(configs/CLAUDE.md configs/claude-settings.json configs/common-sdd.md configs/engram-protocol.md configs/context7.md)
 
 usage() {
@@ -73,7 +73,6 @@ refresh() {
   copy_file "$HOME/.claude/engram-protocol.md" "$ROOT/configs/engram-protocol.md"
   copy_file "$HOME/.claude/rules/context7.md" "$ROOT/configs/context7.md"
   copy_tree "$HOME/.config/opencode" "$ROOT/opencode"
-  copy_tree "$HOME/.claude/sounds" "$ROOT/sounds"
   find "$ROOT" -name .DS_Store -delete
   echo "refreshed managed config; backup: .refresh-backups/$stamp"
 }
